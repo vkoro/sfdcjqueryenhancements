@@ -1,4 +1,4 @@
-<apex:page showHeader="false" standardController="TestObject__c" extensions="DemoPageController">
+<apex:page showHeader="false" standardController="TestObject__c" extensions="UIDemoController">
     <script type="text/javascript" src="{!URLFOR($Resource.JQueryUICup,'js/jquery-1.4.2.min.js')}"></script>
 
     <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
