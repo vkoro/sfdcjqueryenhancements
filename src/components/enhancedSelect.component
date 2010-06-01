@@ -1,0 +1,25 @@
+<apex:component controller="EnhancedSelectController" allowDML="true" >
+
+    <script type="text/javascript" src="{!$Resource.JQSelectMenu}"></script>
+    <apex:stylesheet value="{!$Resource.JQSelectMenuCSS}"/>
+    
+      <apex:attribute name="pageController" 
+          type="PageControllerBase" 
+          assignTo="{!pageController}" 
+          required="true" 
+          description="The controller for the page." />
+          
+    <apex:attribute name="object" description="This is the object" type="SObject" required="false" assignTo="{!myObject}" />
+    <apex:attribute name="fieldName" description="This is the field name" type="String" required="true" assignTo="{!fieldName}" />
+
+    {!onLoad}
+
+    <select id="SL{!fieldName}"  name="SL{!fieldName}" style="width:150px">
+	   	 <apex:repeat value="{!picklistValues}" var="v">  
+	          <apex:outputText escape="false" value="{!v.outputHTML}" />	      
+	    </apex:repeat>
+    </select>
+    
+   <span id="S{!fieldName}"><apex:inputHidden value="{!myValueHolder}" /></span>
+
+</apex:component>
