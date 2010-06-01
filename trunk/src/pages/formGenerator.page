@@ -1,0 +1,259 @@
+<apex:page standardController="Form__c" extensions="formCreatorController" id="page">
+
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/>
+    
+    <style type="text/css">
+       
+       .message {
+            color: red;
+        }
+        #formfieldheader tr th {
+            border-bottom:2px solid #CCCCCC;
+            white-space:nowrap;
+            padding:1px 0px 4px 1px;
+        }
+        .fftd {
+            border-bottom:1px solid #E3DEB8;
+            color:#333333;
+            padding:1px 0px 4px 1px;
+        }
+        
+    </style>  
+
+    <script type="text/javascript" src="{!URLFOR($Resource.ColorPicker, '/jscolor.js')}"/>
+
+    <apex:form >
+        <apex:actionFunction action="{!addField}" name="addFormField" oncomplete="fieldsSortable()" rerender="formfieldsPanel, objectfieldsPanel" >
+            <apex:param name="firstParam" assignTo="{!fname}" value="" />
+            <apex:param name="secondParam" assignTo="{!position}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+    <apex:form >
+        <apex:actionFunction action="{!removeField}" name="removeFormField" oncomplete="fieldsSortable()" rerender="formfieldsPanel, objectfieldsPanel" >
+            <apex:param name="firstParam" assignTo="{!fname}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+    
+    <script type="text/javascript">
+        var count = 0;
+        
+        $(document).ready(function() {
+            // Initialise the form fields table for sorting 
+            fieldsSortable();
+            
+        });
+        
+        function fieldsSortable() {
+        
+             $("#formfieldlisting").sortable({
+                connectWith: '.connectedSortable',
+                update: function(ev, ui) { reorder(); },
+                receive: function(ev, ui) {
+                    reorder();  
+                    addFormField(ui.item.find("tr").attr("title"),ui.item.find(".order").val());
+                }
+                //,
+                //cancel: '.apirequired'
+                    
+                });
+                
+                $("#objectfieldlisting").sortable({
+                    connectWith: '.connectedSortable',
+                    receive: function(ev, ui) {
+                
+                        removeFormField(ui.item.find("tr").attr("title"));
+                    }
+                
+            }).disableSelection();
+        
+        }
+        //when the table has been reordered, recalculate the positions (thank you JQuery)
+
+        function reorder(){
+            var counter = 1;
+            
+            //the hidden fields that are bound to the form field order
+            $('#formfieldlisting .order').each(function(i, o){
+                o.value = i+1;
+            });
+            
+            //make sure the output matches
+            $('#formfieldlisting .orderoutput').each(function(i, o){
+                //alert('index: ' + i + ' order : ' + o.value + ' object id: ' + o.id);
+                
+                o.innerHTML = i+1;    
+            });
+        }
+        
+    </script>   
+    
+    <apex:pageMessages />
+    
+    <apex:form id="pageForm">
+
+    <apex:sectionHeader title="Web Form" subtitle="editor"/>
+                        
+    <apex:PageBlock title="Web Form Editor" id="pageBlock">
+
+        <!-- Button Section -->
+        <apex:pageBlockButtons >
+            <apex:commandButton value="Save" action="{!save}" status="status"/> 
+            <apex:commandButton value="Cancel" action="{!cancel}" status="status"/>
+        </apex:pageBlockButtons>
+ 
+	 <apex:PageBlockSection >
+        
+          <apex:panelGrid columns="4" cellspacing="10">
+    
+              <apex:outputText value="Display Name:"/>
+              <apex:inputText value="{!webform.Title__c}" style="width:200x;"/>
+
+              <apex:outputText value="Form Code (for URL):"/>
+              <apex:inputText value="{!webform.Name}" style="width:100px;"/>  
+
+              <apex:outputText value="Forwarding URL (for when form is successfully submitted):"/>
+              <apex:inputText value="{!webform.Return_URL__c}" style="width:100px;"/>  
+              <apex:outputText value=""/>
+              <apex:outputText value=""/>
+              
+              <apex:outputText value="Finished Blurb (displays if there is no Forwarding URL)"/>
+              <apex:inputField value="{!webform.Finished_Blurb__c}" />  
+              <apex:outputText value=""/>
+              <apex:outputText value=""/>
+
+                <apex:outputText value="Object Name:" />
+                <apex:selectList value="{!selectedObject}" size="1">
+                    <apex:selectOptions value="{!objectSelectOptions}"/>            
+                </apex:selectList>          
+                <apex:commandButton action="{!selectobject}" value="Select" rerender="objectSelector, objectfieldsPanel, formfieldsPanel" status="status" oncomplete="fieldsSortable()" />
+
+
+                <apex:outputText value="Default Object:" />
+              , <!-- <apex:selectList value="{!selectedObject}" size="1">
+                    <apex:selectOptions value="{!objectSelectOptions}"/>            
+                </apex:selectList>          
+                <apex:commandButton action="{!selectobject}" value="Select" rerender="objectSelector, objectfieldsPanel, formfieldsPanel" status="status" oncomplete="fieldsSortable()" />
+       			-->
+        </apex:panelGrid><BR/>
+
+	 </apex:PageBlockSection>
+
+        <!-- Object Field List -->
+        <apex:PageBlockSection title="Fields {!IF(NOT(ISNULL(selectedObjectLabel)), 'for '+selectedObjectLabel, '')}" columns="2" id="fieldSection">
+        
+            <!-- <apex:panelGrid columns="3" id="fieldsGrid"> -->
+
+            <!--  Object Fields -->
+            <apex:outputPanel id="objectfieldsPanel">
+            
+             <!--  Allow users to add a custom text line or blank spacer -->
+            <br/>
+            <table>
+                <tr>
+                    <td>
+                        <apex:outputLabel value="Add Group Header" rendered="{!formFieldsSize >0}"/>&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <apex:commandLink action="{!addHeader}" rerender="formfieldsPanel, objectfieldsPanel" status="status"  rendered="{!formFieldsSize >0}" oncomplete="fieldsSortable();">                                                 
+                            <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add"/>
+                        </apex:commandLink>
+                     </td>
+                </tr>
+            </table>
+            <br/>
+            
+            <h2>Available Fields</h2>
+            <table id="objectfieldheader">
+                <thead class="headerRow">
+                <tr>
+                    <th style="width:150px;">Label</th>
+                    <th style="width:80px;">Type</th>
+                    <th style="width:25px;">Req</th>
+                    <th style="width:30px;">Add</th> 
+                </tr>
+                </thead>
+            </table>
+            <div id="objectfieldlisting" class="connectedSortable">
+                <apex:repeat value="{!objectfields}" var="f" id="objectfieldsRepeat">
+                    
+                    <table id="{!f.Name}" class="formfieldrow" style="width: 300px; cursor:pointer;">
+                        <tr title="{!f.Name}" class="objectfield">  
+                            <td style="width:150px;border-bottom:1px solid #E3DEB8;"><apex:outputField value="{!f.Label__c}"/></td>
+                            <td style="width:95px;border-bottom:1px solid #E3DEB8;"><apex:outputText value="{!f.Type__c}"/></td>                
+                            <td style="width:25px;border-bottom:1px solid #E3DEB8;">
+                                <apex:outputField value="{!f.APIRequired__c}" />
+                            </td>  
+                            <td style="width:30px;border-bottom:1px solid #E3DEB8;">
+                                <apex:inputText value="{!f.Order__c}" id="order" styleclass="order" style="display:none"/>
+                                
+                                 <apex:commandLink action="{!addField}" rerender="formfieldsPanel, objectfieldsPanel" status="status" oncomplete="fieldsSortable();">                       
+                                    <apex:param name="fieldname" value="{!f.Name}" assignto="{!fname}"></apex:param>
+                                    <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add"/>
+                                 </apex:commandLink>
+                             </td>       
+                        </tr>
+                    </table>                    
+                </apex:repeat>
+            </div>
+                                                
+            
+
+            </apex:outputPanel>
+            
+            <!-- Form Fields -->
+            <apex:outputPanel id="formfieldsPanel" > 
+            <h2>Form Fields</h2>
+            <table id="formfieldheader">
+                <thead class="headerRow">
+                    <tr>
+                        <th style="width:125px;">Label</th>
+                        <th style="width:80px;">Type</th>
+                        <th style="width:25px;">Required</th>
+                        <th style="width:30px;">Order</th>
+                        <th style="width:30px;">Remove</th> 
+                    </tr>
+                </thead>
+            </table>
+            <div id="formfieldlisting" class="connectedSortable">
+                <apex:repeat value="{!formFields}" var="f" id="formfieldsRepeat">
+                    <table id="{!f.Name}" class="formfieldrow{!IF(f.APIRequired__c == true, ' apirequired', '')}" style="width: 320px; cursor:pointer;">
+                        <tr title="{!f.Name}" class="formfield">    
+                            <td style="width:125px;border-bottom:1px solid #E3DEB8;"><apex:inputText value="{!f.Label__c}" size="15"/></td>
+                            <td style="width:80px;border-bottom:1px solid #E3DEB8;"><apex:outputText value="{!f.Type__c}"/></td>                
+                            <td style="width:25px;border-bottom:1px solid #E3DEB8;">
+                                <apex:inputField value="{!f.Required__c}" rendered="{!NOT(f.APIRequired__c) && f.Type__c != 'CUSTOMTEXT'}"/>
+                                <apex:outputField value="{!f.APIRequired__c}" rendered="{!f.APIRequired__c}"/>
+                            </td>
+                            <td style="width:30px;border-bottom:1px solid #E3DEB8;">
+                            <apex:outputText value="{0, number, 0}" id="orderoutput" styleclass="orderoutput">
+                                   <apex:param value="{!f.Order__c}" />
+                             </apex:outputText>
+                             <apex:inputText value="{!f.Order__c}" id="order" styleclass="order" style="display:none"/>
+                            </td>
+                            <td style="width:30px;border-bottom:1px solid #E3DEB8;">
+                              <apex:commandLink action="{!removeField}" rerender="formfieldsPanel, objectfieldsPanel" status="status" oncomplete="fieldsSortable();">
+                                <apex:param name="fieldname" value="{!f.Name}" assignTo="{!fname}"></apex:param>
+                                <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_delete.png')}" title="Remove"/>
+                             </apex:commandLink>
+                             </td>       
+                        </tr>
+                    </table>                    
+                </apex:repeat>
+            </div>
+            </apex:outputPanel>
+
+            <!-- Action Status -->
+            <apex:actionStatus stopText="" id="status"> 
+                <apex:facet name="start">               
+                    <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/time.png')}" title="Wait..."/>                                 
+                </apex:facet>
+            </apex:actionStatus>
+            
+        </apex:PageBlockSection>
+    </apex:PageBlock>
+
+    </apex:form>
+
+</apex:page>

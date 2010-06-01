@@ -1,0 +1,156 @@
+<apex:component controller="FormController" allowDML="true" >   
+         
+    <apex:attribute name="onCompleteJavascript" description="Javascript that will run when form is finished" type="String" required="false" />
+    <apex:attribute name="formName" description="Name of form to be rendered" type="String" required="true" />
+      <apex:attribute name="pageController" 
+          type="PageControllerBase" 
+          assignTo="{!pageController}"   
+          required="true" 
+          description="The controller for the page." />  
+
+	<style type="text/css">  
+                 
+        .required, .message {    
+        	color: red;       
+        }    
+          
+		* { font-family: Verdana; font-size: 96%; }
+		label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }
+		td { padding-top: 2px; padding-bottom: 2px; }
+		td.tdlabel { width: 150px; }
+		td.tdvalue { width: 250px;  } 
+	</style>       
+
+   <script type="text/javascript">
+
+                
+
+
+                <apex:repeat value="{!fieldsWithShowRules}" var="f">
+
+                            $('.cf{!f.order} :input').change(function() {
+                                
+                                    <apex:repeat value="{!f.ShowRules}" var="r">
+                                        if($(this).val() != '{!r.firstValueToShow}'<apex:repeat value="{!r.valuesToShow}" var="av">&& $(this).val() != '{!av}'</apex:repeat>) {
+                                            $('.cfg{!r.groupName}').fadeOut();  
+                                        }
+                                        else if($(this).val() == '{!r.firstValueToShow}'<apex:repeat value="{!r.valuesToShow}" var="av">|| $(this).val() == '{!av}'</apex:repeat>) {
+                                            $('.cfg{!r.groupName}').fadeIn();
+                                        }
+                                        
+                                    </apex:repeat>
+                            });
+                </apex:repeat>      
+                
+                <apex:repeat value="{!fieldsWithGroups}" var="f">  
+                                $(".cfg{!f.field.Group__c}").hide();
+                </apex:repeat>                    
+
+		        
+              function esc(myid) {
+                     return '#' + myid.replace(/(:|\.)/g,'\\\\$1');
+                  }
+         </script>
+    
+        <apex:form id="form" styleclass="myForm">
+        
+        <apex:actionFunction action="{!pageController.ecSave}" name="saveMe" rerender="msgs" onComplete="{!onCompleteJavascript}" ></apex:actionFunction>
+        
+         <script type="text/javascript"> <!-- NOTE: this script tag must be inside form to work -->
+         
+           var form = '{!$Component.form}'; 
+         
+        </script>
+        
+    <br/>       
+    
+        <!-- Validation Messages -->
+        <apex:pageMessages id="msgs"/>
+    <br/>
+    
+    
+    <apex:outputPanel rendered="{!hasRequired}">
+    	<p class="required">*&nbsp;required</p>
+   </apex:outputPanel>
+    
+        <!-- Start of the form fields -->
+    <table>
+
+    <apex:repeat value="{!allFields}" var="f">  
+
+            <apex:outputPanel rendered="{!(f.field.Type__c == 'Header') && (f.field.Label__c != null)}">
+                <tr>
+                	<td colspan="2" style="padding:10px 0px 10px 0px;" >
+                                       <div class="ui-helper-reset ui-state-default ui-corner-all" >
+                                         <span style="padding-top:5px;padding-left:5px;">{!f.field.Label__c}</span>	
+                                       </div>
+                 	</td>
+                </tr>             
+            </apex:outputPanel>
+                
+            <apex:outputPanel rendered="{!f.field.Type__c != 'Header' && f.field.Hidden__c != true}" >
+                <tr class="cfg{!f.field.Group__c}">      
+                    <td class="tdlabel" >{!f.field.Label__c}</td>    
+                    <td class="tdValue">
+                        <apex:outputText value=" *" rendered="{!f.field.Required__c && f.field.Hidden__c != true}" styleClass="required"/>
+                        <apex:outputPanel rendered="{!NOT(f.field.Required__c)}">
+                            &nbsp;&nbsp;
+                        </apex:outputPanel>
+                        <c:inputformfield field="{!f.field}" order="{!f.order}" pageController="{!pageController}" />
+                    </td>
+                </tr>
+            </apex:outputPanel>   
+            
+            <apex:outputPanel rendered="{!f.field.Requires_Verification__c}">
+                <tr>
+                <td class="tdlabel"><apex:outputText value="Verify {!f.field.Label__c}"/></td>
+                <td class="tdValue">
+                    <apex:outputText value=" *" styleClass="required"/>
+                    <input type="Text" equalTo=".cfitem{!f.order}" style="width:200px" required="true" />
+                </td>
+                </tr>
+            </apex:outputPanel>   
+            
+    </apex:repeat>
+    <!-- Again, but now the hidden fields, we create them here to avoid empty TD cells -->
+    <div id="hiddenFields" style="display:none">
+        <apex:repeat value="{!fields}" var="f">
+                <apex:outputPanel rendered="{!f.Type__c != 'Header' && f.Hidden__c == true}">
+                    <c:inputformfield field="{!f}" pageController="{!pageController}" />                
+                </apex:outputPanel>
+        </apex:repeat>
+    </div>
+    
+    <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>  
+    <tr><td></td><td><apex:commandButton value="{!form.Save_Button_Text__c}"  /></td></tr>
+    </table>
+    
+    </apex:form>
+    
+    <apex:outputText escape="false" value="{!pageController.javascript}"/>
+    
+       <script type="text/javascript">
+
+                
+          $(document).ready(function(){      
+                
+                $(esc(form)).validate({
+                 
+	                     submitHandler: function(form) {
+	                        saveMe();
+	                     }
+                     });
+
+		        <!-- does not work with apex : inputfield -->
+		   	    <apex:repeat value="{!fieldsWithVal}" var="f">
+								$(".cf{!f.order} :input:first").rules("add",  
+									{ {!f.JQueryValidation}  });
+		        </apex:repeat>  
+                     
+
+              });
+              
+      </script>
+    
+</apex:component>
