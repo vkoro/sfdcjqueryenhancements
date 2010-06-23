@@ -7,7 +7,6 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 	// because there is no true onload allowed for components
 	// and the constructor is run before the setters on attributes
 	public String getOnLoad(){
-		
 		  
 		  onLoad();  
 		  System.debug('getOnLoad TEXT');
@@ -33,7 +32,6 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 			  System.debug('FB:' + frontBack.size());
 			  if(frontBack.size() > 1)
 			  {
-		  		System.debug('WOO I made it');
 		  		System.debug(frontBack[0]);  
 		  		System.debug(frontBack[1]);
 		  		System.debug(frontBack[1].length());
@@ -43,9 +41,8 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 		  		System.debug(frontBack[1].length());
 			  	
 			  	if(frontBack[1].length() == 0) {
-		  			System.debug('WOO I made it2');
 			  		myValueHolder = frontBack[0];
-			  		System.debug('New MVH: ' + (String) myValueHolder);	
+			  		//System.debug('New MVH: ' + (String) myValueHolder);	
 			  	}  
 			  }
 		  }
@@ -54,6 +51,7 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 		  String validationString = '';
 		  if(validateAs != null)
 		  {
+		  	
 	          if (validateAs.toUpperCase() == 'URL') 
 	          {
 	          	validationString += 'url: true, maxlength: 255';
@@ -79,13 +77,13 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 	          	validationString += 'currency: true';
 	          	valRuleAdded = true;
 	          }
-	          else if (validateAs.toUpperCase() == 'PERCENT' || validateAs.toUpperCase() == 'PERCENTAGe') 
+	          else if (validateAs.toUpperCase() == 'PERCENT' || validateAs.toUpperCase() == 'PERCENTAGE') 
 	          {
 	          	validationString += 'percentage: true';
 	          	valRuleAdded = true;
 	          }
 	          
-	          else if (validateAs.toUpperCase() == 'INTERNATIONALPHONE') 
+	          else if (validateAs.toUpperCase() == 'INTERNATIONALPHONE' || validateAs.toUpperCase() == 'PHONE') 
 	          {
 	          	validationString += 'internationalPhone: true';
 	          	valRuleAdded = true;

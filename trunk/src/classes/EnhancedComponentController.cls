@@ -25,8 +25,14 @@ public with sharing virtual class EnhancedComponentController {
 		  	myObject = pageController.myObject;
 	  	if(myObject != null && myObject.get(fieldName) != null)
 		  	myValueHolder = String.valueOf(myObject.get(fieldName));
-		String s = (String) myValueHolder;
-		System.debug('onLoad Value: ' + s);
+		try {
+			//This can be a boolean which cannot be cast to a String
+			String s = (String) myValueHolder;
+			System.debug('onLoad Value: ' + s);
+		}
+		catch(Exception e)
+		{
+		}
   	}
   	catch(SObjectException soe)
   	{
