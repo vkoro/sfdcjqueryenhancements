@@ -387,14 +387,14 @@ public class formCreatorController extends PageControllerBase {
       //*************
     // TEST METHODS
     //*************
-    public static testMethod void formCreationT1() {
+  /*  public static testMethod void formCreationT1() {
         // Construct the standard controller for Form__c. //
         ApexPages.StandardController stdcon = new ApexPages.StandardController(new Form__c());
         
         formCreatorController controller = new formCreatorController(stdcon);
         //simulate an object select
         controller.selectedObject = 'Test_Object__c';
-        controller.selectObject();
+        controller.selectObject();  
         System.assertEquals('Test', controller.selectedObjectLabel);
         //fill in the fields
         Form__c form = controller.webform;
@@ -458,9 +458,9 @@ public class formCreatorController extends PageControllerBase {
         
         //cancel the edit
         //controller.cancel();
-    }
+    }*/
     
-    
+    /*
     //Test of an edit
     public static testMethod void formCreationT2() {
                 
@@ -497,7 +497,7 @@ public class formCreatorController extends PageControllerBase {
         insert f6;
         insert f7;   
         insert f8;
-        insert f9;
+        insert f9;   
         insert f10;
         insert f11;
         insert f12;
@@ -546,7 +546,7 @@ public class formCreatorController extends PageControllerBase {
         //f17.Text_Value__c = form.Id;
         //System.assertEquals(true, controller.validate());
     } 
-
+*/
     
   
 }
