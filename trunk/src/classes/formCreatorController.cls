@@ -4,7 +4,6 @@ public class formCreatorController extends PageControllerBase {
     public String fname 					{ get; set; }
     public Integer position 				{ get; set; }
     public String mode 						{ get; set; }
-	
     public Form__c webform 					{ get; set; }  
     
     Map<String, Schema.SObjectType> gd;

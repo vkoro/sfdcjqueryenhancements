@@ -20,10 +20,7 @@ Copyright notice at page bottom
          <div id="container">
          
               <div id="title"><h2><apex:outputText value="{!form.Title__c}" /></h2></div>
-             
-             <!-- Validation Messages -->
-            <apex:pageMessages id="msgs"/>
-                 
+                              
               <div id="formDisplay">
                    <c:Form formname="{!form.Title__c}" onCompleteJavascript="$('#formDisplay').hide();$('#finishedDisplay').show();" pageController="{!this}" /> 
               </div>     

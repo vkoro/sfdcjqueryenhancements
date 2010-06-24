@@ -23,9 +23,6 @@
 
    <script type="text/javascript">
 
-                
-
-
                 <apex:repeat value="{!fieldsWithShowRules}" var="f">
 
                             $('.cf{!f.order} :input').change(function() {
@@ -62,16 +59,9 @@
          
         </script>
         
-    <br/>       
-    
         <!-- Validation Messages -->
         <apex:pageMessages id="msgs"/>
     <br/>
-    
-    
-    <apex:outputPanel rendered="{!hasRequired}">
-    	<p class="required">*&nbsp;required</p>
-   </apex:outputPanel>
     
         <!-- Start of the form fields -->
     <table>
@@ -123,7 +113,7 @@
     
     <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>
     <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>  
-    <tr><td></td><td><apex:commandButton value="{!form.Save_Button_Text__c}"  /></td></tr>
+    <tr><td></td><td><apex:commandButton value="{!form.Save_Button_Text__c}" rendered="{!NOT(empty)}"/></td></tr>
     </table>
     
     </apex:form>
