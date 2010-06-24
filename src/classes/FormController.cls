@@ -231,6 +231,11 @@ public class FormController extends EnhancedComponentController {
         
         return newPr;
     }
+    
+    public Boolean getEmpty()
+    {
+		return (allFields==null || allFields.size()==0);
+    }
 
     class FieldWrapper
     {

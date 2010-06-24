@@ -71,6 +71,40 @@ public with sharing virtual class PageControllerBase {
   		
   		return js;
   }    
+
+  public String getCompleteJavascript()
+  {
+	  	String js = '' +
+	  	'\n<style> .required, .message {color: red;}\n' +    
+		'* { font-family: Verdana; font-size: 96%; }\n' +
+		'label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }</style>\n' +
+	  	'<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/></script>\n' +
+    	'<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/></script>\n' +
+    	'<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/jquery.validate.min.js"></script>\n' +
+    	'<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/additional-methods.js"></script>\n' +
+	  	'<script type="text/javascript">\n';
+	  	
+	  	if(javascriptMethods != null) 
+	  	  js += javascriptMethods + '\n';
+
+	  	if(onLoadJavascript == null)
+	  		onLoadJavascript = '';
+	  		
+		  js +=	'  $(document).ready(function() {\n  ' +
+		       ' \n' + 
+		       '   $(".form").validate({ \n' +
+               ' \n' +
+               '      submitHandler: function(form) {\n' +
+               '        saveMe();\n' +
+               '      } \n' +
+               ' }); \n' +
+		  	onLoadJavascript +  
+		  	'   });  \n';
+		  	
+  		js +=	'</script>\n';
+  		
+  		return js;
+  }    
   
   
   public PageControllerBase getThis() {
