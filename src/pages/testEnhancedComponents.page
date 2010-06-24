@@ -6,9 +6,7 @@
     <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/additional-methods.js"></script>
     <script type="text/javascript" src="{!$Resource.JQAdditionalValidationForSalesforce}"></script>
     <script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
-    <script type="text/javascript" src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
 
-    <link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" type="text/css" media="screen" />
     <apex:stylesheet value="{!URLFOR($Resource.JQueryUICup,'development-bundle/themes/cupertino/jquery.ui.all.css')}"/>
 
 <style type="text/css">
@@ -55,7 +53,6 @@
     padding-top:4px;
     padding-bottom:4px;
 
-    
 }
 
 .required, .message {    
@@ -72,16 +69,16 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
 <div id="container" >
     <div id="header">
         <div style="float:right"><apex:image value="{!$Resource.ThemeRollerReadyWhite200}"/></div>
-        <p><apex:outputText value="Object Name: {!TestObject__c.name}" /></p>
-        <p><a onclick="$('#container').slideUp('slow');$('#adminPanel').slideDown('slow');">Admin Panel</a>&nbsp;</p>
+        <p><BR/><apex:outputText value="Object Name: {!TestObject__c.name}" /></p>
+        <!--  <p><a onclick="$('#container').slideUp('slow');$('#adminPanel').slideDown('slow');">Admin Panel</a>&nbsp;</p> -->
         <p><apex:pageMessages id="msgs"/> </p>
          
     </div>
-    
+      
     
     <div id="leftbar">
     
-               <apex:form >
+        <apex:form >
              <apex:pageBlock title="Standard Elements" >                      
                 <apex:pageBlockButtons >
                     <apex:commandButton action="{!save}" value="Save"/>
@@ -113,7 +110,7 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
     </div> <!-- end left bar -->
 
     <div id="middlebar">
-
+		
         <apex:form styleClass="myForm" >   
         
             <table class="enhanced">
@@ -205,62 +202,34 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
         
 
   </div> <!-- end middle bar -->
-  
-  <script type="text/javascript">
 
-        // Let's test this function
-        function isEven(val) {
-            return val % 2 === 0;
-        }
-        
-        test('isEven()', function() {
-            ok(isEven(0), 'Zero is an even number');
-            ok(isEven(2), 'So is two');
-            ok(isEven(-4), 'So is negative four');
-            ok(!isEven(1), 'One is not an even number');
-            ok(!isEven(-7), 'Neither does negative seven');
-        
-            // Fails
-            ok(isEven(3), 'Three is an even number');
-            
-               test('assertions', function() {  
-        equals( 2, 1, 'one equals one');  
-    })  
-        })
-    </script>
-    
 
  </div>  <!-- end container -->
 
 
+
+
     <script type="text/javascript">
     
-        {!javascriptMethods}
         
         $(document).ready(function() {
         
             $('.myForm').validate({
                 
                      submitHandler: function(form) {
-                     // superSave();
+                       superSave();
                      }
                 });
 
-            {!onLoadJavascript}
             
              $('#switcher').themeswitcher();
              $(".button").button();
-             //$("#container").slideUp();
-
-            // $.get("qunitTests", function(data){
-            //       alert("Data Loaded: " + data);
-            //       $("#supercontainer").append("woo2");
-            //       $("#supercontainer").append(data);
-            // });
 
          });
-    
+      
     </script>
+
+     <apex:outputText escape="false" value="{!javascript}" />
 
     <apex:form >
         <apex:actionFunction name="superSave" action="{!ecSave}" />

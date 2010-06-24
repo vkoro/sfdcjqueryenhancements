@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <fields>
+        <fullName>Form_Field__c</fullName>
+        <label>Form Field</label>
+        <referenceTo>Form_Field__c</referenceTo>
+        <relationshipLabel>Field Show Rule</relationshipLabel>
+        <relationshipName>Field_Show_Rule</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <type>MasterDetail</type>
+    </fields>
+    <fields>
+        <fullName>Value_to_Show__c</fullName>
+        <description>Field with defined name must have this value in order to show field attached field</description>
+        <label>Value to Show</label>
+        <length>80</length>
+        <type>Text</type>
+    </fields>
+    <label>Field Show Rule</label>
+    <nameField>
+        <label>Field Show Rule Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>Field Show Rule</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+</CustomObject>

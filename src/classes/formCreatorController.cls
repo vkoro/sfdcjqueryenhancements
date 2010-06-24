@@ -128,16 +128,20 @@ public class formCreatorController extends PageControllerBase {
 
         String fieldname = fname; 
         
-        //System.debug('Adding field : ' + fieldname + ' from ' + selectedObject);
+        System.debug('Adding field : ' + fieldname + ' from ' + selectedObject);
         
         for(Integer i = 0; i < objectFields.size();i++) {
             Form_Field__c ff = objectFields.get(i);
+            
+            System.debug(ff.Name + ' NAME ' + fieldname);  
+            
             if(ff.Name == fieldname) {
+            	
                 DescribeFieldResult dfr = sot.getDescribe().fields.getMap().get(fieldname).getDescribe();
                 String picklistvalues = '';
                 String fieldType = dfr.getType().name();
 
-				//TODO: Preload counry picklist here
+				//TODO: Preload country picklist here
                 if( fieldType == 'PICKLIST' || fieldType == 'MULTIPICKLIST' ) {  
 
                     List<PicklistEntry> entries = dfr.getPicklistValues();
@@ -387,33 +391,33 @@ public class formCreatorController extends PageControllerBase {
       //*************
     // TEST METHODS
     //*************
-  /*  public static testMethod void formCreationT1() {
-        // Construct the standard controller for Form__c. //
+    public static testMethod void ct1() {
+        //* Construct the standard controller for Form__c. *//
         ApexPages.StandardController stdcon = new ApexPages.StandardController(new Form__c());
         
         formCreatorController controller = new formCreatorController(stdcon);
         //simulate an object select
-        controller.selectedObject = 'Test_Object__c';
-        controller.selectObject();  
-        System.assertEquals('Test', controller.selectedObjectLabel);
+        controller.selectedObject = 'TestObject__c';
+        controller.selectObject();
+        System.assertEquals('TestObject', controller.selectedObjectLabel);
         //fill in the fields
         Form__c form = controller.webform;
         form.Name = 'Test';
         form.Return_URL__c = 'http://www.salesforce.com';
         form.SavedByWebformeditor__c = true;
         //add some fields from the object to the form
-        ApexPages.currentPage().getParameters().put('fieldname', 'Checkbox__c');
+        controller.fname = 'formation__Checkbox__c';
         controller.addField();
         System.assertEquals(1, controller.formFields.size());
-        ApexPages.currentPage().getParameters().put('fieldname', 'Text__c');
+        controller.fname = 'formation__Text__c';
         controller.addField();
         System.assertEquals(2, controller.formFields.size());
-        ApexPages.currentPage().getParameters().put('fieldname', 'Picklist__c');
+        controller.fname = 'formation__Picklist__c';
         controller.addField();
         System.assertEquals(3, controller.formFields.size());
         //move a field up
-        System.assertEquals('Text__c', controller.formFields.get(1).Name);
-        ApexPages.currentPage().getParameters().put('fieldname', 'Text__c');
+        System.assertEquals('formation__Text__c', controller.formFields.get(1).Name);
+        //ApexPages.currentPage().getParameters().put('fieldname', 'Text__c');
         //controller.moveUp();
         //System.assertEquals('Text__c', controller.formFields.get(0).Name);
         //System.assert(controller.formFields.get(0).Name == 'Text__c');
@@ -428,15 +432,15 @@ public class formCreatorController extends PageControllerBase {
         //controller.moveDown();
         //controller.moveDown(); //hit the end of the list
         //remove a field
-        ApexPages.currentPage().getParameters().put('fieldname', 'Picklist__c');
+        controller.fname = 'formation__Picklist__c';
         controller.removeField();
         System.assertEquals(2, controller.formFields.size());
         //preview the form
         PageReference previewref = controller.preview();
-        System.assertEquals('/apex/form', Page.formDemo.getUrl());
+        System.assertEquals('/apex/formation__form', Page.form.getUrl());
         //save the webform
         PageReference ref = controller.save();
-        System.assertNotEquals(null, ref);
+        System.assertNotEquals(null, ref);  
         
         //create an empty webform that doesn't validate
         Form__c form2 = new Form__c();
@@ -458,36 +462,36 @@ public class formCreatorController extends PageControllerBase {
         
         //cancel the edit
         //controller.cancel();
-    }*/
+    }
     
-    /*
+    
     //Test of an edit
-    public static testMethod void formCreationT2() {
+    public static testMethod void ct2() {
                 
         //Create a webform, fields and save it
         Form__c form = new Form__c();
         form.Name = 'Test';
-        form.Object_Name__c = 'Test_Object__c';
+        form.Object_Name__c = 'TestObject__c';
         form.Object_Label__c = 'Test';      
         form.Return_URL__c = 'http://www.salesforce.com';
         form.SavedByWebformeditor__c = true;
         insert form;
         
         //create test form fields for this web form
-        Form_Field__c f1 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f2 = new Form_Field__c(Type__c = 'Email', Name = 'Email__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f3 = new Form_Field__c(Type__c = 'URL', Name = 'URL__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f4 = new Form_Field__c(Type__c = 'Checkbox', Name = 'Checkbox__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f5 = new Form_Field__c(Type__c = 'Date', Name = 'Date__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f6 = new Form_Field__c(Type__c = 'DateTIME', Name = 'DateTime__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f7 = new Form_Field__c(Type__c = 'Currency', Name = 'Currency__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f8 = new Form_Field__c(Type__c = 'Number', Name = 'Number__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f9 = new Form_Field__c(Type__c = 'Percent', Name = 'Percent__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f10 = new Form_Field__c(Type__c = 'Textarea', Name = 'Text_Area__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f11 = new Form_Field__c(Type__c = 'Phone', Name = 'Phone__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f12 = new Form_Field__c(Type__c = 'Lookup', Name = 'Picklist__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f13 = new Form_Field__c(Type__c = 'UNSUPPORTED', Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f14 = new Form_Field__c(Type__c = 'Header', Name = 'CUSTOM Text1', Form__c = form.Id, Label__c = '* CUSTOM Text *',  Width__c = 250);
+        Form_Field__c f1 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f2 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('EMAIL'), Name = 'Email__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f3 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('URL'), Name = 'URL__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f4 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('BOOLEAN'), Name = 'Checkbox__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f5 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('DATE'), Name = 'Date__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f6 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('DATETIME'), Name = 'DateTime__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f7 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('CURRENCY'), Name = 'Currency__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f8 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('DOUBLE'), Name = 'Number__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f9 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('PERCENT'), Name = 'Percent__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f10 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('TEXTAREA'), Name = 'Text_Area__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f11 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('PHONE'), Name = 'Phone__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f12 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('PICKLIST'), Name = 'Picklist__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f13 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('UNSUPPORTED'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f14 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('CUSTOMTEXT'), Name = 'CUSTOM Text1', Form__c = form.Id, Label__c = '* CUSTOM Text *',  Width__c = 250);
         
         insert f1;
         insert f2;
@@ -495,9 +499,9 @@ public class formCreatorController extends PageControllerBase {
         insert f4;
         insert f5;
         insert f6;
-        insert f7;   
+        insert f7;
         insert f8;
-        insert f9;   
+        insert f9;
         insert f10;
         insert f11;
         insert f12;
@@ -509,44 +513,36 @@ public class formCreatorController extends PageControllerBase {
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('id', form.Id);
         
-        // Construct the standard controller for Form__c. 
+        //* Construct the standard controller for Form__c. *//
         ApexPages.StandardController stdcon = new ApexPages.StandardController(new Form__c());
         formCreatorController controller = new formCreatorController(stdcon);
         System.assertEquals(14, controller.formFields.size());
         //add a custom field
         controller.addHeader();
         System.assertEquals(15, controller.formFields.size());
-        //remove a custom field 
-        ApexPages.currentPage().getParameters().put('fieldname', 'CUSTOM Text2');
-        controller.removeField();
-        System.assertEquals(14, controller.formFields.size());
-        //now save with less field than when it was originally retrieved
         controller.save();
         //give the object a dummy required field
-        Form_Field__c f15 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl', Required__c = true);
+        Form_Field__c f15 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl', Required__c = true);
         controller.objectFields.add(f15);
         System.assertEquals(controller.validate(), false);
         f15.Required__c = false;
         System.assertEquals(controller.validate(), true);
         //check if 'hidden field needs value' validation works
-        Form_Field__c f16 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c2', Form__c = form.Id, Label__c = 'lbl', Hidden__c = true);
+        Form_Field__c f16 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c2', Form__c = form.Id, Label__c = 'lbl', Hidden__c = true);
         controller.formFields.add(f16);
-        System.assertEquals(controller.validate(), false);      
-        //f16.Text_Value__c = 'now it has a value';
-        //System.assertEquals(controller.validate(), true);
+        
         //hide a field 'in the interface', this should reset any previously defined value back to null
-        //ApexPages.currentPage().getParameters().put('fieldname', 'Text__c2');
-        //controller.hiddenField();
+        ApexPages.currentPage().getParameters().put('fieldname', 'Text__c2');
+        controller.hiddenField();
         //System.assertEquals(webFormUtils.getFormFieldValue(f16), null);
-        //does the Lookup check work correctly (Lookup Id's are stored in the Text_Value__c field)
-       // Form_Field__c f17 = new Form_Field__c(Type__c = 'Lookup', Text_Value__c = 'wrong value', Name = 'Form__c', Form__c = form.Id, Label__c = 'lbl');
-        //controller.formFields.add(f17);
+        //does the reference check work correctly (reference Id's are stored in the Text_Value__c field)
+        Form_Field__c f17 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('REFERENCE'), Name = 'Form__c', Form__c = form.Id, Label__c = 'lbl');
+        controller.formFields.add(f17);
         //System.assertEquals(false, controller.validate());
-        //now give it a real and existing Lookup  
+        //now give it a real and existing reference  
         //f17.Text_Value__c = form.Id;
         //System.assertEquals(true, controller.validate());
-    } 
-*/
+    }  
     
   
 }
