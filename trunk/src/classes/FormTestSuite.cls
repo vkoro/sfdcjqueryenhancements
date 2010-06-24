@@ -44,14 +44,14 @@ public with sharing class FormTestSuite {
         insert f12;
         insert f13;
         insert f13b;
-		insert f15;
+        insert f15;
                 
         //add a field with a missing required value
         Form_Field__c f14 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl', Required__c = true);
         insert f14;
         
         //set the current page for the test, put the web form id in parameters and instantiate the controller
-        PageReference pageRef = Page.formDemo;
+        PageReference pageRef = Page.form;
         //PageReference pageRef;
         Test.setCurrentPage(pageRef);
         // Add parameters to page URL
@@ -92,8 +92,8 @@ public with sharing class FormTestSuite {
         insert f20;
         
         // Add parameters to page URL
-        PageReference pr = Page.formDemo;
-       // PageReference pr;  
+        PageReference pr = Page.form;
+        //PageReference pr;  
         Test.setCurrentPage(pr);
         ApexPages.currentPage().getParameters().put('id', form2.Id);
         
@@ -126,8 +126,8 @@ public with sharing class FormTestSuite {
 
     
         //set the current page for the test, put the web form id in parameters and instantiate the controller
-        PageReference pageRef = Page.formDemo;
-        //PageReference pageRef;  
+       PageReference pageRef = Page.form;
+       // PageReference pageRef;  
         Test.setCurrentPage(pageRef);
         // Add parameters to page URL
         ApexPages.currentPage().getParameters().put('id', form.Id);
@@ -136,25 +136,27 @@ public with sharing class FormTestSuite {
     }
 
 
-	public static testMethod void formFieldT1() {
-		FormFieldController controller = new FormFieldController();
-		Form_Field__c field = new Form_Field__c();
-		field.PicklistEntries__c = 'a,b,c';
-		field.Type__c = 'Picklist';
-		controller.field = field;
-		List<SelectOption> selectlist = controller.getPicklistSelectOptions();
-		System.assertEquals(4, selectlist.size());
-	}
+    public static testMethod void formFieldT1() {
+        FormFieldController controller = new FormFieldController();
+        Form_Field__c field = new Form_Field__c();
+        field.PicklistEntries__c = 'a,b,c';
+        field.Type__c = 'Picklist';
+        controller.field = field;
+        List<SelectOption> selectlist = controller.getPicklistSelectOptions();
+        System.assertEquals(4, selectlist.size());
+    }
 
-	public static testMethod void formFieldT2() {
-		FormFieldController controller = new FormFieldController();
-		Form_Field__c field = new Form_Field__c();
-		field.PicklistEntries__c = 'a,b,c';
-		field.Type__c = 'Multi-Select';
-		controller.field = field;
-		List<SelectOption> selectlist = controller.getPicklistSelectOptions();
-		System.assertEquals(3, selectlist.size());
-	}
+    public static testMethod void formFieldT2() {
+        FormFieldController controller = new FormFieldController();
+        Form_Field__c field = new Form_Field__c();
+        field.PicklistEntries__c = 'a,b,c';
+        field.Type__c = 'Multi-Select';
+        controller.field = field;
+        List<SelectOption> selectlist = controller.getPicklistSelectOptions();
+        System.assertEquals(3, selectlist.size());
+    }  
+
+
 
 
   

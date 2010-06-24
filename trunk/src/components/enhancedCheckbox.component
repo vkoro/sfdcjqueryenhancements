@@ -11,6 +11,6 @@
 
     {!onLoad}
     
-    <apex:inputCheckbox value="{!myValueHolder}" />
+    <apex:inputCheckbox value="{!myValueHolder}" styleClass="C{!fieldname}" />
   
 </apex:component>

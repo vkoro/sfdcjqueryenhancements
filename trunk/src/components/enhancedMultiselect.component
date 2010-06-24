@@ -11,15 +11,15 @@
           
     <apex:attribute name="fieldName" description="This is the field name" type="String" required="true" assignTo="{!fieldName}" />
     <apex:attribute name="picklistEntries" description="Entries to override Salesforce defaults" type="String" required="false" assignTo="{!picklistEntries}" />
- 
-    {!onLoad}
+    <apex:attribute name="object" description="This is the object" type="SObject" required="false" assignTo="{!myObject}" />
+
+    {!onLoad}     
     
     <select multiple="multiple" name="MS{!fieldName}" style="width:150px" >
 	   	 <apex:repeat value="{!picklistValues}" var="v">  
 	          <apex:outputText escape="false" value="{!v.outputHTML}" />	      
 	    </apex:repeat>
     </select>
-    
     
    <span id="S{!fieldName}"><apex:inputHidden value="{!myValueHolder}" /></span>
 
