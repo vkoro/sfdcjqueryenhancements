@@ -2,12 +2,13 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 
 	public String validateAs	 { get; set; }
 	public String maxLength 	 { get; set; }
+
 	private List<String> frontBack;
 	
 	// because there is no true onload allowed for components
 	// and the constructor is run before the setters on attributes
 	public String getOnLoad(){
-		  
+		  	
 		  onLoad();  
 		  System.debug('getOnLoad TEXT');
 		  
@@ -95,6 +96,12 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 	          						'ASCIIOnly: true\n';  
 	          	valRuleAdded = true;
 	          }
+	          else 
+	          {
+	          	validationString += 'maxlength: 255';
+	          	valRuleAdded = true;
+	          	
+	          }
 	          
 		  }  
 	                                     
@@ -105,12 +112,22 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
            		  valRuleAdded = true;
            		validationString += 'maxlength: ' + maxlength; 
            }
+           System.debug('TESTINGREQ');
+           if(required == true) {
+          		 System.debug('REQ!!');
+           	    if(valRuleAdded)
+           			validationString += ', ';
+           		else
+           		  valRuleAdded = true;
+           		validationString += 'required: true'; 
+           }
+           	
 		if(validationString != '')
 		{
 			String initialize = '$(".T' + fieldName + '").rules("add", \n' +   
 										' { ' + validationString + ' });\n';  
 			
-			pageController.addOnLoadJavascript(initialize);
+			addOnLoadJavascriptToParentController(initialize);
 		}
 		return '';
 	}

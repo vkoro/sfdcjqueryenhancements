@@ -4,15 +4,20 @@ public class formCreatorController extends PageControllerBase {
     public String fname 					{ get; set; }
     public Integer position 				{ get; set; }
     public String mode 						{ get; set; }
+	
     public Form__c webform 					{ get; set; }  
     
     Map<String, Schema.SObjectType> gd;
     public List<SObjectType> tokens = new List<SObjectType>();
     public List<String> objectlabels 		{ get; set;}
-    public List<SelectOption> objectSelectOptions { get; set; }
     public SObjectType sot 					{ get; set; } 
+    public List<SelectOption> objectSelectOptions { get; set; }
     public String selectedObject 			{ get; set; } 
     public String selectedObjectLabel 		{ get; set; } 
+
+    public List<SelectOption> recordSelectOptions { get; set; }
+    public String selectedRecord 			{ get; set; } 
+
     public List<Form_Field__c> objectFields { get; set; }
     public List<Form_Field__c> formFields 	{ get; set; }
 
@@ -42,7 +47,7 @@ public class formCreatorController extends PageControllerBase {
         
         String webformid = System.currentPageReference().getParameters().get('id');
         if(webformid != null) {      
-            webform = [select Id, Name, Object_Name__c, Object_Label__c, Finished_Blurb__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Save_Button_Text__c, Text_Color__c from Form__c where Id = :webformid];          
+            webform = [select Id, Name, Object_Name__c, Object_Label__c, Finished_Blurb__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Save_Button_Text__c, Text_Color__c, Style__c, Default_Record__c from Form__c where Id = :webformid];          
             selectedObject = webform.Object_Name__c;
             selectObject();
             formFields = [Select f.Form__c, f.Type__c, f.Required__c, f.APIRequired__c, f.PicklistEntries__c, f.Order__c, f.Name, f.Label__c, f.Hidden__c, f.Width__c, f.Id
@@ -69,8 +74,10 @@ public class formCreatorController extends PageControllerBase {
             webform.Background_Color__c = '#FFFFFF';
             webform.Text_Color__c = '#000000';
             webform.Save_Button_Text__c = 'Submit';            
+	        updateRecords();
         }
         webform.SavedByWebformEditor__c = true;
+        
     }
     
     private void preloadReqFields(){
@@ -85,6 +92,16 @@ public class formCreatorController extends PageControllerBase {
                     addField();
             }
         
+    }
+    
+    public void updateRecords() {
+  
+    	recordSelectOptions = new List<SelectOption>(); 
+    	recordSelectOptions.add(new SelectOption('', 'None'));
+    	
+    	for(SObject s : Database.query('select id, name from ' + selectedObject + ' order by name desc limit 2000'))
+    		recordSelectOptions.add(new SelectOption(s.id, (String) s.get('name')));
+    	  
     }
     
     public PageReference selectObject() {
@@ -118,29 +135,27 @@ public class formCreatorController extends PageControllerBase {
         objectfields = WebformUtils.sortByLabel(objectfields);
 
         preloadReqFields();
+        updateRecords();
         
         return null;
     }
-        
+
+
     //adds an object's field to this web form
     public PageReference addField() {
 
         String fieldname = fname; 
         
-        System.debug('Adding field : ' + fieldname + ' from ' + selectedObject);
+        //System.debug('Adding field : ' + fieldname + ' from ' + selectedObject);
         
         for(Integer i = 0; i < objectFields.size();i++) {
             Form_Field__c ff = objectFields.get(i);
-            
-            System.debug(ff.Name + ' NAME ' + fieldname);  
-            
             if(ff.Name == fieldname) {
-            	
                 DescribeFieldResult dfr = sot.getDescribe().fields.getMap().get(fieldname).getDescribe();
                 String picklistvalues = '';
                 String fieldType = dfr.getType().name();
 
-				//TODO: Preload country picklist here
+				//TODO: Preload counry picklist here
                 if( fieldType == 'PICKLIST' || fieldType == 'MULTIPICKLIST' ) {  
 
                     List<PicklistEntry> entries = dfr.getPicklistValues();
@@ -212,6 +227,10 @@ public class formCreatorController extends PageControllerBase {
         if(!validate()) return null;
         try {
             //Save the web form     
+            
+            if(webform.name == null)
+            	webform.name = webform.Title__c.replace(' ','_');            	
+            
             upsert webform;
             
             //attached all the form fields to the correct Web Form
@@ -236,7 +255,7 @@ public class formCreatorController extends PageControllerBase {
         }
         return new PageReference('/'+webform.Id);       
     }
-    
+
     //JAD Form preview not supported    
     //save and preview the form
     public PageReference preview() {
@@ -264,9 +283,20 @@ public class formCreatorController extends PageControllerBase {
             Form_Field__c ff = formFields.get(i);
             ff.Order__c = i + 1;            
         }
-    }
+    }  
+    
+    public List<SelectOption> getStyles()
+	{
+		List<SelectOption> styles = new List<SelectOption>();
+		styles.add(new SelectOption('', '--SELECT--'));
+		styles.add(new SelectOption('Cupertino', 'Cupertino'));
+		styles.add(new SelectOption('Smoothness', 'Smoothness'));
+		styles.add(new SelectOption('UI Darkness', 'UI Darkness'));
+		styles.add(new SelectOption('Redmond', 'Redmond'));
+		return styles;			
 
-        //Added JAD
+	}
+    
     private void incrementFormFields(Form_Field__c newItem) {
         if(formFields.size() == 0) return;
         

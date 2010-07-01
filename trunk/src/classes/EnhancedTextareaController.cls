@@ -14,17 +14,17 @@ public with sharing class EnhancedTextareaController extends EnhancedComponentCo
 		if (expandable.toUpperCase() == 'TRUE') {
 			
 			String initialize = '$(".TA' + fieldName + '").expandable();\n';
-			pageController.addOnLoadJavascript(initialize);
+			addOnLoadJavascriptToParentController(initialize);
 		}
 		if (width != null && width != '') 
 		{
 			String initialize = '$(".TA' + fieldName + '").width(' + width + ');\n';
-			pageController.addOnLoadJavascript(initialize);
+			addOnLoadJavascriptToParentController(initialize);
 		}
 		if (height != null && height != '')
 		{
 			String initialize = '$(".TA' + fieldName + '").height(' + height + ');\n';
-			pageController.addOnLoadJavascript(initialize);
+			addOnLoadJavascriptToParentController(initialize);
 		}
 		  
 		

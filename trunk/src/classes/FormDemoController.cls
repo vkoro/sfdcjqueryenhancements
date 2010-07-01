@@ -26,18 +26,17 @@ public with sharing class FormDemoController extends PageControllerBase {
         catch (QueryException qe)
         {
         	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'There is no form with this name.'));
-			 return;      	
+			return;      	
         }
         
         System.debug('form is:' + formName);
                
     }
 	   	  
-	   	  
 	  public void save()
 	  {
 	  	ecSave();
-	 }
+	  }
 	  
 
 }
