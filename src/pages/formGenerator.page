@@ -103,42 +103,45 @@
             <apex:commandButton value="Cancel" action="{!cancel}" status="status"/>
         </apex:pageBlockButtons>
  
-	 <apex:PageBlockSection >
+     <apex:PageBlockSection >
         
-          <apex:panelGrid columns="4" cellspacing="10">
+          <apex:panelGrid columns="2" cellspacing="10">
     
-              <apex:outputText value="Display Name:"/>
-              <apex:inputText value="{!webform.Title__c}" style="width:200x;"/>
+              <c:enhancedLabel label="Display Name:"  tooltip="Displayed at top of form" for="Title" renderIcon="true"/>
+              <apex:inputText value="{!webform.Title__c}" style="width:200x;"/>    
 
-              <apex:outputText value="Form Code (for URL):"/>
+              <c:enhancedLabel label="Form Code:"  tooltip="Used for URL" for="Code"/>
               <apex:inputText value="{!webform.Name}" style="width:100px;"/>  
 
-              <apex:outputText value="Forwarding URL (for when form is successfully submitted):"/>
-              <apex:inputText value="{!webform.Return_URL__c}" style="width:100px;"/>  
-              <apex:outputText value=""/>
-              <apex:outputText value=""/>
-              
-              <apex:outputText value="Finished Blurb (displays if there is no Forwarding URL)"/>
+              <c:enhancedLabel label="Style:" tooltip="Please visit http://ui-enhancements-developer-edition.na7.force.com/ to see what form elements will look like" for="Style" renderIcon="true"/>
+                <apex:selectList value="{!webform.Style__c}" size="1">
+                    <apex:selectOptions value="{!styles}"/>   
+                </apex:selectList>  
+                
+              <c:enhancedLabel label="Forwarding URL:" tooltip="for when form is successfully submitted" for="ReturnURL" renderIcon="true"/>
+              <apex:inputText value="{!webform.Return_URL__c}" style="width:100px;"/>    
+
+              <c:enhancedLabel label="Finished Message:" tooltip="Displays if there is no Forwarding URL set" for="Finished" renderIcon="true"/>    
               <apex:inputField value="{!webform.Finished_Blurb__c}" />  
-              <apex:outputText value=""/>
-              <apex:outputText value=""/>
 
                 <apex:outputText value="Object Name:" />
-                <apex:selectList value="{!selectedObject}" size="1">
-                    <apex:selectOptions value="{!objectSelectOptions}"/>            
+                <apex:panelGroup >
+                    <apex:selectList value="{!selectedObject}" size="1">
+                        <apex:selectOptions value="{!objectSelectOptions}"/>   
+                    </apex:selectList>          
+                    <apex:commandButton action="{!selectobject}" value="Select" rerender="objectSelector, objectfieldsPanel, formfieldsPanel, defaultRecord" status="status" oncomplete="fieldsSortable()" />
+                </apex:panelGroup>
+              
+               <c:enhancedLabel label="Default Record:" tooltip="Field values from this record will be used as default values for the form" for="defaultRecord" renderIcon="true"/>    
+               <apex:selectList value="{!webform.Default_Record__c}" size="1" id="defaultRecord" >
+                    <apex:selectOptions value="{!recordSelectOptions}"/>            
                 </apex:selectList>          
-                <apex:commandButton action="{!selectobject}" value="Select" rerender="objectSelector, objectfieldsPanel, formfieldsPanel" status="status" oncomplete="fieldsSortable()" />
 
 
-                <apex:outputText value="Default Object:" />
-              , <!-- <apex:selectList value="{!selectedObject}" size="1">
-                    <apex:selectOptions value="{!objectSelectOptions}"/>            
-                </apex:selectList>          
-                <apex:commandButton action="{!selectobject}" value="Select" rerender="objectSelector, objectfieldsPanel, formfieldsPanel" status="status" oncomplete="fieldsSortable()" />
-       			-->
+                
         </apex:panelGrid><BR/>
 
-	 </apex:PageBlockSection>
+     </apex:PageBlockSection>
 
         <!-- Object Field List -->
         <apex:PageBlockSection title="Fields {!IF(NOT(ISNULL(selectedObjectLabel)), 'for '+selectedObjectLabel, '')}" columns="2" id="fieldSection">
@@ -198,8 +201,6 @@
                 </apex:repeat>
             </div>
                                                 
-            
-
             </apex:outputPanel>
             
             <!-- Form Fields -->
@@ -210,7 +211,7 @@
                     <tr>
                         <th style="width:125px;">Label</th>
                         <th style="width:80px;">Type</th>
-                        <th style="width:25px;">Required</th>
+                        <th style="width:25px;">Req</th>
                         <th style="width:30px;">Order</th>
                         <th style="width:30px;">Remove</th> 
                     </tr>

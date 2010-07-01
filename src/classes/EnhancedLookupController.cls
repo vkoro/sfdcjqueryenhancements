@@ -28,7 +28,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
   
 		
 
-		pageController.addOnLoadJavascript(initialize);
+		addOnLoadJavascriptToParentController(initialize);
 		return '';
 		
 	}

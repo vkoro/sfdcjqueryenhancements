@@ -1,7 +1,7 @@
 public with sharing class FormTestSuite {
 
 
-        //** TEST METHODS **//
+        //** TEST METHODS **//  
     
     public static testMethod void t1() {
         //set up a test web form
@@ -50,6 +50,8 @@ public with sharing class FormTestSuite {
         Form_Field__c f14 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl', Required__c = true);
         insert f14;
         
+        
+        
         //set the current page for the test, put the web form id in parameters and instantiate the controller
         PageReference pageRef = Page.form;
         //PageReference pageRef;
@@ -58,11 +60,14 @@ public with sharing class FormTestSuite {
         ApexPages.currentPage().getParameters().put('name', form.name);
         
         FormController controller = new FormController();
+        controller.getInit();
         System.assertEquals(16, controller.fields.size());
+        System.assertNotEquals(null,controller.getStylesheet());
+        
         //save with missing required fields
         PageReference ref = controller.saveObject();
+          
         System.assertEquals(null,ref);
-        
         //add the required values and save again
         //f14.Text_Value__c ='something';
         //upsert f14;
@@ -101,6 +106,37 @@ public with sharing class FormTestSuite {
         //the save needs to throw an exception because the object's required field is not in the formfields list        
         System.assert(controller3.saveObject() == null);
           
+    }  
+
+    public static testMethod void testDefaultValueLoad() {
+        //set up a test web form
+        TestObject__c to = new TestObject__c();
+        to.name ='Frog King';
+        to.Text__c = 'Frogs rule';
+        insert to;
+        
+        Form__c form = new Form__c();
+        form.Name = 'testWebform';
+        form.Object_Name__c = 'TestObject__c';
+        form.Return_URL__c = 'www.x.com';
+        form.Default_Record__c = to.id;
+        form.SavedByWebformeditor__c = true;
+        
+        insert form;
+        
+        //create test form fields for this web form       
+        Form_Field__c f1 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
+        insert f1;
+        
+        //set the current page for the test, put the web form id in parameters and instantiate the controller
+        PageReference pageRef = Page.form;
+        Test.setCurrentPage(pageRef);
+        // Add parameters to page URL
+        ApexPages.currentPage().getParameters().put('name', form.name);
+        
+        FormController controller = new FormController();
+        controller.getInit();
+        System.assertEquals(to.Text__c, (String) controller.sobjectInstance.get('Text__c'));
     }
     
     
@@ -136,7 +172,7 @@ public with sharing class FormTestSuite {
     }
 
 
-    public static testMethod void formFieldT1() {
+    public static testMethod void testPicklist() {
         FormFieldController controller = new FormFieldController();
         Form_Field__c field = new Form_Field__c();
         field.PicklistEntries__c = 'a,b,c';
@@ -145,8 +181,22 @@ public with sharing class FormTestSuite {
         List<SelectOption> selectlist = controller.getPicklistSelectOptions();
         System.assertEquals(4, selectlist.size());
     }
+    
+        public static testMethod void testLabel() {
+        EnhancedLabelController controller = new EnhancedLabelController();
+        Form_Field__c field = new Form_Field__c();
+        field.name = 'pebbles';
+        field.Label__c = 'Fruity Pebbles';
+        field.Tooltip__c = 'delicious';
+		controller.label = field.Label__c;
+		controller.forField = field.name;
+		controller.renderIcon = true;
+		controller.tooltip = field.Tooltip__c;
+		controller.getOnLoad();
+    }
+    
 
-    public static testMethod void formFieldT2() {
+    public static testMethod void testMultiPicklist() {
         FormFieldController controller = new FormFieldController();
         Form_Field__c field = new Form_Field__c();
         field.PicklistEntries__c = 'a,b,c';
@@ -154,9 +204,7 @@ public with sharing class FormTestSuite {
         controller.field = field;
         List<SelectOption> selectlist = controller.getPicklistSelectOptions();
         System.assertEquals(3, selectlist.size());
-    }  
-
-
+    }
 
 
   

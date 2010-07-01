@@ -13,8 +13,7 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
 		  
 		String currVal = (String) myValueHolder;		
 		if(currVal != null)
-			currVals = currVal.split(';', 0);	  				
-		  
+			currVals = currVal.split(';', 0);	
 		  
 		String updateHiddenField = 'function updateSL' + fieldName + '() { \n' + 
 		'                $("#S' + fieldName + ' :hidden:input:first").val(""); \n' + 
@@ -27,10 +26,10 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
 		'                 } \n';  
 
 		String initialize = '$("#SL' + fieldName + '-button").remove(); \n' +   //if the element already exists remove it
-		 '                 $("#SL' + fieldName + '").selectmenu()' +   
-		 '                  .bind("change", function(){\n' + 
-		'                   updateSL' + fieldName + '();\n' +
-		'                }\n' + 
+		'                 $("#SL' + fieldName + '").selectmenu()' +   
+		 					 '.bind("change", function(){\n' + 
+		'                     updateSL' + fieldName + '();\n' +
+		'                  }\n' + 
 		'                );\n';
 
 
@@ -43,50 +42,53 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
 			' });\n'; */
 		
 		pageController.addJavascriptMethods(updateHiddenField);
-		pageController.addOnLoadJavascript(initialize);
+		addOnLoadJavascriptToParentController(initialize);
 		return '';
 	}
 	
-	  public List<PicklistVal> getPickListValues() {  
-  
-  		if(picklistSO == null && picklistEntries == null && myObject != null)  
-  		{
-	        Schema.sObjectType t = myObject.getSObjectType();
-	        
-	        Schema.DescribeSObjectResult objDesc = t.getDescribe();
-	        Map<String, Schema.SObjectField> fieldsMap = objDesc.fields.getMap();
-	        System.debug('fieldsMap:' + fieldsMap.size());
-	        System.debug('fieldName:' + fieldName);
-	        List<Schema.PicklistEntry> pickListValues = fieldsMap.get(fieldName).getDescribe().getPickListValues();
-	        picklistSO = new List<SelectOption>();
-	        for(Schema.PicklistEntry pe : pickListValues)
-				picklistSO.add(new SelectOption(pe.getValue(), pe.getLabel()));
-  		}
-  		else if (picklistSO == null && picklistEntries != null)
-  		{
-				picklistSO = new List<SelectOption>();
-				SelectOption so;
-				so = new SelectOption('','--Select--');  
-				picklistSO.add(so);  
-					      
-				String[] values = picklistEntries.split(',' , 0);
-				for(String s:values) {
-					so = new SelectOption(s,s);
-					picklistSO.add(so);
-				}
-  			
-  		} 
-  		else if (picklistSO == null)
-  			picklistSO = new List<SelectOption>();
-  		
-  			
-		picklistVals = new List<PicklistVal>();
-  		for(SelectOption so : picklistSO)
-			picklistVals.add(new PicklistVal(so, currVals));
+      public List<PicklistVal> getPickListValues() {    
+        System.debug('GETPICKLISTVAL');
+        if(picklistSO == null && picklistEntries == null && myObject != null)  
+        {
+            System.debug('GRABBING');
+            Schema.sObjectType t = myObject.getSObjectType();
+            
+            Schema.DescribeSObjectResult objDesc = t.getDescribe();
+            Map<String, Schema.SObjectField> fieldsMap = objDesc.fields.getMap();
+            System.debug('fieldsMap:' + fieldsMap.size());
+            System.debug('fieldName:' + fieldName);
+            List<Schema.PicklistEntry> pickListValues = fieldsMap.get(fieldName).getDescribe().getPickListValues();
+            picklistSO = new List<SelectOption>();
+            for(Schema.PicklistEntry pe : pickListValues)
+                picklistSO.add(new SelectOption(pe.getValue(), pe.getLabel()));
+        }
+        else if (picklistSO == null && picklistEntries != null)
+        {
+                System.debug('USING PASSED');
+                picklistSO = new List<SelectOption>();
+                SelectOption so;
+                so = new SelectOption('','--Select--');  
+                picklistSO.add(so);  
+                String[] values = picklistEntries.split(',' , 0);
+                for(String s:values) {
+                    so = new SelectOption(s,s);
+                    picklistSO.add(so);  
+                }
+            
+        } 
+        else if (picklistSO == null)
+            picklistSO = new List<SelectOption>();
+       
+
+            
+        picklistVals = new List<PicklistVal>();
+        for(SelectOption so : picklistSO)
+            picklistVals.add(new PicklistVal(so, currVals));
 	        
         return picklistVals;
           
     }
+    
     
 	
 

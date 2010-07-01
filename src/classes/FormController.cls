@@ -6,12 +6,12 @@ public class FormController extends EnhancedComponentController {
     public List<Form_Field__c> fields 				{ get; set; }
     public String testString 						{ get; set; }  
     public String formName 							{ get; set; }  
-    public String UpdateFieldName 					{ get; set; }  
+    public String UpdateFieldName 	 				{ get; set; }  
 
     public List<FieldWrapper> fieldsWithVal 		{ get; set; }
     public List<FieldWrapper> allFields 			{ get; set; }
     public List<FieldWrapper> fieldsWithAutoComplete{ get; set; }
-    public List<FieldWrapper> fieldsWithShowRules 	{ get; set; }
+    public List<FieldWrapper> fieldsWithShowRules 	{ get; set; }  
     public List<FieldWrapper> fieldsWithGroups 		{ get; set; }
     public List<FieldWrapper> fieldsWithDatePicker 	{ get; set; }
     public List<FieldWrapper> fieldsWithMultiSelect { get; set; }
@@ -19,15 +19,20 @@ public class FormController extends EnhancedComponentController {
     //Map that holds all the object names and tokens in your org
     Map<String, Schema.SObjectType> gd;
     public List<SObjectType> tokens = new List<SObjectType>();
-    public SObject sobjectInstance 				{ get; set; } 
-    public Boolean editMode 					{ get; set; }
-    public PageControllerBase pageController    { get; set; }    
-    public Boolean hasRequired					{ get; set; }    
+    public SObject sobjectInstance 					{ get; set; } 
+    public Boolean editMode 						{ get; set; }
+    public PageControllerBase pageController   		{ get; set; }    
+    public Boolean hasRequired						{ get; set; }    
         
-    //CONSTRUCTOR
-    public FormController() {
+    private static String DEFAULT_THEME = 'cupertino';
+    
+    public void getInit() {
+  
+		System.debug('FORMNAME1:' +formName);
         //get the url parameter indication the web form Id
-        formName = System.currentPageReference().getParameters().get('name');
+       if (formName == null || formName == '' )
+       		formName = System.currentPageReference().getParameters().get('name');
+		System.debug('FORMNAME2:' +formName);
 
         //if(formId == null) {
         //    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'This page required a Web Form id url parameter.'));
@@ -41,31 +46,30 @@ public class FormController extends EnhancedComponentController {
         }
         try {
 
-	        form = [select Id, Name, Object_Name__c, Object_Label__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Save_Button_Text__c, Text_Color__c from Form__c where name = :formname];        
+	        form = [select Id, Name, Object_Name__c, Object_Label__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Style__c, Save_Button_Text__c, Text_Color__c, Default_Record__c from Form__c where name = :formname];        
 
         }
         catch(QueryException qe)	{
+        	
 			 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'There is no form with this name.'));
 			 return;      	
+			 
         }    
         
         String mode = System.currentPageReference().getParameters().get('mode');
+        
         if(mode == 'edit')
             editMode = true;
         else
             editMode = false;
             
-        //get the form and it's fields
-        //form = [select Id, Name, Object_Name__c, Return_URL__c,
-        //        Background_Color__c, Text_Color__c, Save_Button_Text__c, Title__c from Contact_Form_Profile__c where Id = :formId];
-                
         fields = [Select f.Name, f.Id, f.Type__c, f.Label__c, f.Order__c,  f.PicklistEntries__c, f.Width__c, 
-                    f.Required__c, f.Hidden__c, 
+                    f.Required__c, f.Hidden__c, f.Tooltip__c,
                     f.Requires_Verification__c, Object_Name__c, Group__c, Max_Length__c, Update_On__c
                     from Form_Field__c f where f.Form__c = :form.id order by f.Order__c];
                     
         fieldsWithVal = new List<FieldWrapper>();  
-        allFields = new List<FieldWrapper>();
+        allFields = new List<FieldWrapper>();  
         fieldsWithShowRules = new List<FieldWrapper>();
         fieldsWithGroups = new List<FieldWrapper>();
 		hasRequired = false;
@@ -94,28 +98,76 @@ public class FormController extends EnhancedComponentController {
         SObjectType sot = gd.get(form.Object_Name__c);
         //instantiate an object of this type
         try {
-            sobjectInstance = sot.newSObject();
+        	// SObjectInstance may also be passed to the form
+        	if(sobjectInstance == null)
+	            sobjectInstance = sot.newSObject();
         }
+        
         //this happens when the object's API name doesn't exist, or has been removed from the profile access settings
         //Typically when admin's don't setup the webform editor correctly
         catch(System.NullPointerException ex) {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'The system can not create a form for : '+ form.Object_Name__c));
+            return;
         }
+        
+        //if there is an existing object with default values for the form, we will load them
+        if(form.Default_Record__c != null)
+        {
+        	try {
+        		
+	        	Map<String, SObjectField> fields = sot.getDescribe().fields.getMap();
+	        	List<SObjectField> fieldtokens = fields.values();
+	        	List<String> objectfields = new List<String>();
+	
+		        for(SObjectField fieldtoken:fieldtokens) {
+		        	
+		            DescribeFieldResult dfr = fieldtoken.getDescribe();
+		            if(!dfr.isCreateable()) continue; // || dfr.isDefaultedOnCreate()
+		            if((dfr.getName() == 'CreatedDate') || (dfr.getName() == 'LastModifiedDate') || (dfr.getName() == 'CreatedById') || (dfr.getName() == 'LastModifiedById')) continue;
+		            if(dfr.getName() == 'OwnerId') continue;
+		            if(dfr.getName() == 'Name') continue;
+
+		            objectFields.add(dfr.getName());
+		            
+		        }
+		        
+		        String queryString = 'select id, ';
+		        for(String obf : objectfields)
+		        	queryString += obf + ', ';
+		        queryString = queryString.substring(0,queryString.length()-2);
+		        queryString += ' from ' + form.Object_Name__c + ' where id =\'' + form.Default_Record__c + '\'';
+		        System.debug('QUERY:' + queryString);
+	        	List<SObject> defaults = Database.query(queryString);
+	        	for(String obf : objectFields)
+	        	 	if(defaults[0].get(obf) != null)
+		        		sobjectInstance.put(obf, defaults[0].get(obf));
+        	}
+        	catch (Exception e)         	{
+        		
+        		System.debug('Could not load default values: ' + e ); 
+        	}
+        }
+        
+        
+        //URL passed Params not currently supported in Formation
+       /* 
         //override the field value with whatever has been passed in the URL
+
         Map<String,String> params = System.currentPageReference().getParameters();
         //create a map of the fields
         Map<String,Form_Field__c> mfields = new Map<String,Form_Field__c>(); 
         for(Form_Field__c f:fields) {
             mfields.put(f.Name, f);
         }
-        for(String p:params.keySet()) {
+       
+       for(String p:params.keySet()) {
             //check if the passed param matches one of the field names
             Form_Field__c f = mfields.get(p);
             //if a field matches, make it's value what was passed as value in the url parameter
             if(f != null) {        
                 //  WebformUtils.setFormFieldValue(f, params.get(f.Name));
             }
-        }
+        }*/
     }
     
     
@@ -125,8 +177,6 @@ public class FormController extends EnhancedComponentController {
     	String id;
     	List<sObject> sos;        
     	PageReference newPr;
-    	
-    	
     	
         try {
             //Boolean to keep validation status
@@ -231,11 +281,32 @@ public class FormController extends EnhancedComponentController {
         
         return newPr;
     }
-    
-    public Boolean getEmpty()
-    {
-		return (allFields==null || allFields.size()==0);
-    }
+
+	public Boolean getEmpty()
+	{
+		return (allFields == null || allFields.size() == 0);
+		
+	}
+	
+	public String getStylesheet()
+	{
+		String url = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/';
+		if(form.Style__c == 'Cupertino')
+			url += 'cupertino';
+		else if(form.Style__c == 'Smoothness')
+			url += 'smoothness';
+		else if(form.Style__c == 'UI Darkness')
+			url += 'ui-darkness';
+		else if(form.Style__c == 'Redmond')
+			url += 'redmond';
+		else
+			url += DEFAULT_THEME;
+			
+		url += '/jquery-ui.css';
+		
+		return url;			
+
+	}  
 
     class FieldWrapper
     {
@@ -272,7 +343,12 @@ public class FormController extends EnhancedComponentController {
                         
         }    
         
-        
+    public Boolean getHasMessages() {
+    
+    	return ApexPages.hasMessages();
+    	
+    }
+    
     public Boolean getHasShowRules()
     {
     	if (showRules == null || showRules.size() == 0)
@@ -280,73 +356,8 @@ public class FormController extends EnhancedComponentController {
     	else
     		return true;
     }
-        
-    // see: http://community.salesforce.com/t5/Apex-Code-Development/Building-a-reusable-JSON-component/m-p/172428
-    // and: http://joe-ferraro.com/2009/04/extjs-vf-json/
-    
-    public String getJsonifiedObjectRecords()
-     {
-     	String jsonreturn = '';
-		try {
-			System.debug('getJsonifiedObjectRecords for:' + field.name + ' ' + field.Object_Name__c + ' ' + field.Type__c);
-			  
-			String queryString = 'Select id, name from ' + field.Object_Name__c + ' limit 1000';
-			System.debug('queryString:' + queryString);
-			List<sObject> sos = Database.query(queryString);
-			Map<String, Schema.SObjectField> columns = sos.getSObjectType().getDescribe().fields.getMap();
-					  
-			jsonReturn += '[';    
-	        for (sObject so : sos) {  
-	        		jsonReturn += ' { ';
-	        		 for(String columnName : columns.keySet()) 
-			          {   
-			                	// TODO: Really slow. Speed up?
-			                     try 
-			                     {
-			                     	//Try to get the value of the column name. If it isn't there, then it tosses
-			                     	//an error, no big deal.
-			                     	string cellVal = String.valueOf( so.get(columnName));
-			                        jsonReturn += ''+columnName+': "'+cellVal+'",';   
-			                     }   
-			                     catch(Exception ex) 
-			                     {
-	
-			                     }
-					 }
-		 			 jsonReturn = jsonReturn.substring(0, jsonReturn.length() - 1);
-                	 jsonReturn = jsonReturn + '},';  
-					 
-	        }
-	
-			jsonReturn = jsonReturn.subString(0,jsonReturn.length() - 1);
-	        jsonReturn = jsonReturn + ']';
-	        
-        }
-		catch(Exception e)
-		{
-			System.debug('Bad query in Jsonify Call ' + e);			
-		}
-        
-        return jsonReturn;
-      	}
-      	
-	
-}
+    }
 
-      	class ShowRule
-      	{
-      		public List<String> valuesToShow {get; set;}
-      		public String firstValueToShow {get; set;}
-      		public String groupName {get; set;}
-      		
-      		public ShowRule(Field_Show_Rule__c showRule)
-      		{
-      			valuesToShow = showRule.Value_to_Show__c.split(',');
-      			if (valuesToShow.size() > 0)
-	      			firstValueToShow = valuesToShow.remove(0);
-      			groupName = showRule.name;
-      		}
-      	}
 
     
 }

@@ -3,6 +3,15 @@ public with sharing class EnhancedCheckboxController extends EnhancedComponentCo
 	public String getOnLoad(){
 		
 		onLoad();
+		String v = (String) myValueHolder;
+		if(v != null && v != '')
+		{
+			v = v.toUpperCase();
+			if (v == 'TRUE' || v == 'CHECKED')
+				myValueHolder =  true;
+			else
+				myValueHolder = false;
+		}
 										  					
 		return '';
 	}

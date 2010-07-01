@@ -4,14 +4,15 @@ public with sharing virtual class PageControllerBase {
   private String onLoadJavascript;
   private String javascriptMethods;  
   public SObject myObject 								{ get; set; }
+  private Boolean hasHidden = false;
 	
-	
-	  
 	  public void addComponentController(EnhancedComponentController compController) {
 	  	  	if(myComponentControllers == null)
   				myComponentControllers = new List<EnhancedComponentController>();
   			if(!hasComponentController(compController))	
 	         	myComponentControllers.add(compController);
+	        if (compController.hidden == true)
+	        	hasHidden = true;
       }
       
       public List<EnhancedComponentController> getMyComponentControllers() {
@@ -72,16 +73,21 @@ public with sharing virtual class PageControllerBase {
   		return js;
   }    
 
-  public String getCompleteJavascript()
+  public String getJavascriptDependencies()
   {
-	  	String js = '' +
-	  	'\n<style> .required, .message {color: red;}\n' +    
-		'* { font-family: Verdana; font-size: 96%; }\n' +
-		'label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }</style>\n' +
-	  	'<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/></script>\n' +
+  	return	'<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/></script>\n' +
     	'<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/></script>\n' +
     	'<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/jquery.validate.min.js"></script>\n' +
     	'<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.6/additional-methods.js"></script>\n' +
+  	  	'\n<style> .required, .message {color: red;}\n' +    
+		'* { font-family: Verdana; font-size: 96%; }\n' +
+		'label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }</style>\n';
+  
+  }
+  
+  public String getCompleteJavascript()
+  {
+	  	String js = '' +
 	  	'<script type="text/javascript">\n';
 	  	
 	  	if(javascriptMethods != null) 
@@ -90,9 +96,10 @@ public with sharing virtual class PageControllerBase {
 	  	if(onLoadJavascript == null)
 	  		onLoadJavascript = '';
 	  		
-		  js +=	'  $(document).ready(function() {\n  ' +
+		  js +=	' var form = $(".form");\n ' +
+		  ' $(document).ready(function() {\n  ' +
 		       ' \n' + 
-		       '   $(".form").validate({ \n' +
+		       '   $(form).validate({ \n' +
                ' \n' +
                '      submitHandler: function(form) {\n' +
                '        saveMe();\n' +
@@ -114,26 +121,61 @@ public with sharing virtual class PageControllerBase {
   public void ecSave() {
 
       	System.debug(myComponentControllers.size() + ' Component Controllers');
+      	
+      	// We save values in hidden fields first since there may be a duplicate and if there is a duplicate we want the displayed field to override the hidden field.
+      	
+      	if(hasHidden)
+      	{
+	      	for(EnhancedComponentController ecc : myComponentControllers)
+	      	{  
+	      		  if(ecc.hidden == true)
+	      		  {
+		      		  Object oToPut = ecc.getCastedValue();
+					  System.debug('ecSave ' + ecc.fieldName); 
+				      
+				      if(oToPut != null)  
+				      {
+				      	  System.debug('Attempting to save with an object of type ' + myObject.getSObjectType() + ' and field name: ' + ecc.fieldName);
+				          
+				          try {    
+				                  
+				                  myObject.put(ecc.fieldName, oToPut);
+				              
+				          } catch (Exception e) {
+				              System.debug('Error with fieldname: ' + ecc.fieldName + ' ' + e);
+				              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Update failed on field ' + ecc.fieldName));
+				          }      
+				      }
+	      		  }
+	      	}
+      	}
+      	
       	for(EnhancedComponentController ecc : myComponentControllers)
       	{  
-      		  Object oToPut = ecc.getCastedValue();
-			  System.debug('ecSave ' + ecc.fieldName); 
-		      
-		      if(oToPut != null)  
-		      {
-		      	  System.debug('Attempting to save with an object of type ' + myObject.getSObjectType() + ' and field name: ' + ecc.fieldName);
-		          try {    
-		                  myObject.put(ecc.fieldName, oToPut);
-		              
-		          } catch (Exception e) {
-		              System.debug('Error with fieldname: ' + ecc.fieldName + ' ' + e);
-		              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Update failed on field ' + ecc.fieldName));
-		          }      
-		      }
+      	 if(ecc.hidden != true)
+      		  {
+	      		  Object oToPut = ecc.getCastedValue();
+				  System.debug('ecSave ' + ecc.fieldName); 
+			      
+			      if(oToPut != null)  
+			      {
+			      	  System.debug('Attempting to save with an object of type ' + myObject.getSObjectType() + ' and field name: ' + ecc.fieldName);
+			          
+			          try {    
+			                  
+			                  myObject.put(ecc.fieldName, oToPut);
+			              
+			          } catch (Exception e) {
+			              System.debug('Error with fieldname: ' + ecc.fieldName + ' ' + e);
+			              ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Update failed on field ' + ecc.fieldName));
+			          }      
+			      }
+      		  }
       	}
+      	
       	// may be optional if using a standard controller w/ standard elements alongside this
       	// although appears not to be triggered if no inputField is changed
-      		upsert myObject;   	
+     	upsert myObject;   	
       }
   
     

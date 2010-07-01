@@ -21,6 +21,19 @@ public with sharing class EnhancedComponentTestSuite {
   	
   	PageControllerBase pcb = new PageControllerBase();
 	pcb.myObject = to;  	
+	
+	EnhancedTextController etch = new EnhancedTextController();
+	etch.defaultValue = 'foo';
+	etch.pageController = pcb;
+	etch.fieldName = 'Text__c';
+	etch.validateAs = 'name';
+	etch.maxLength = '20';
+	etch.hidden = true;
+	etch.getOnLoad();
+	System.assertEquals('foo',(String) etch.getCastedValue());
+	System.assertNotEquals(null, to.Text__c);
+	
+	
 	EnhancedDatePickerController edpc = new EnhancedDatePickerController();
 	edpc.pageController = pcb;	  	
 	edpc.fieldName = 'Date__c';
@@ -117,6 +130,7 @@ public with sharing class EnhancedComponentTestSuite {
 	EnhancedCheckboxController ecc = new EnhancedCheckboxController();
 	ecc.pageController = pcb;
 	ecc.fieldName = 'Checkbox__c';
+	ecc.defaultValue = 'checked';
 	ecc.getOnLoad();
 //	System.assertEquals(to.Checkbox__c,(Boolean) ecc.getCastedValue());
 	
@@ -155,10 +169,14 @@ public with sharing class EnhancedComponentTestSuite {
   	pcb.ecSave();
 	System.assert(ApexPages.hasMessages());
 	
-  	System.assertEquals(10, pcb.getMyComponentControllers().size());
+	
+  	System.assertEquals(11, pcb.getMyComponentControllers().size());
   	System.assertNotEquals(null, pcb.getOnLoadJavascript());
   	System.assertNotEquals(null, pcb.getJavascriptMethods());
-  	
+  	System.assertNotEquals(null, pcb.getCompleteJavascript());
+  	System.assertNotEquals(null, pcb.getJavascript());
+  	System.assertNotEquals(null, pcb.getJavascriptDependencies());
+
   }
   
     //create form on the basis of a generic object and add components
