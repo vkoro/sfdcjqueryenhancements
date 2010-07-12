@@ -1,5 +1,8 @@
 public with sharing class EnhancedDatePickerController extends EnhancedComponentController{
 	
+	public String minDate { get; set; }
+	public String maxDate { get; set; }
+	
 	
 	public override void onLoad() {
 		
@@ -15,10 +18,12 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
 			String s = (String) myValueHolder;
 			System.debug('onLoad Value: ' + s);
 	  	}
-	  	catch(SObjectException soe)
+	  	catch(SObjectException soe)  
 	  	{
 	  		System.debug(soe);
 	  	}    
+		uid='EC' + order + fieldName;
+
 		
 	}
 
@@ -28,11 +33,49 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
 	public String getOnLoad(){
 		
 		onLoad();
-										  					
-		String initialize = '$(".DP' + fieldName + '").datepicker({ changeYear: true, ' +
-																	'changeMonth: true });\n';
+		
+		String initialize = '$(".' + uid + '").datepicker({ changeYear: true, ' +
+																	'changeMonth: true';
+		System.debug('MAX' + maxDate + 'MIN' + minDate);
+
+		if(maxDate != null && maxDate != '') 
+		{
+		  String[] stringDate = maxDate.split('/');
+	  	  if(stringDate.size() == 3)
+	  	  {
+		      String m = stringDate[0];
+		      if(m.length() == 1)
+		      	m = '0' + m;
+		      String d =  stringDate[1];
+		      if(d.length() == 1)
+		      	d = '0' + d;
+		      String y = stringDate[2];
+				initialize += ', "maxDate": "' + m + '/' + d + '/' + y + '"';
+
+	  	  }
+			
+		}
+			
+		if(minDate != null && minDate != '') 
+		{
+		  String[] stringDate = minDate.split('/');
+	  	  if(stringDate.size() == 3)
+	  	  {
+		      String m = stringDate[0];
+		      if(m.length() == 1)
+		      	m = '0' + m;
+		      String d =  stringDate[1];
+		      if(d.length() == 1)
+		      	d = '0' + d;
+		      String y = stringDate[2];
+				initialize += ', "minDate": "' + m + '/' + d + '/' + y + '"';
+	  	  }
+			
+		}
+																		
+			initialize += ' });\n';
 																			
-		pageController.addOnLoadJavascript(initialize);
+		addOnLoadJavascriptToParentController(initialize);
 		return '';
 	}
 	

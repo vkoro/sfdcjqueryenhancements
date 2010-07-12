@@ -30,7 +30,17 @@ public with sharing class EnhancedTextareaController extends EnhancedComponentCo
 		
 		return '';
 		
-	}
+	}  
+	
+	public override Object getCastedValue() {
+  	
+  	String s = (String) myValueHolder;
+  	if(s == '')
+  		return null;
+  	else
+	 	return myValueHolder;
+  }
+	
 	
 
 }

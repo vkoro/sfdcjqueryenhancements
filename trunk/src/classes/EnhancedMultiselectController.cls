@@ -2,14 +2,18 @@ public with sharing class EnhancedMultiselectController extends EnhancedComponen
     
     public String picklistEntries   { get; set; }
     List<PicklistVal> picklistVals;    
-    List<SelectOption> picklistSO;
+    public List<SelectOption> picklistSO { get; set; }
     String[] currVals = new List<String>();
     
     // because there is no true onload allowed for components
     // and the constructor is run before the setters on attributes
     public String getOnLoad() {
 
+		//We overwrite the passed value since it means nothing for the Multiselect to be required (we treat it the same way as the checkbox)
+        required = false;
+
         onLoad();  
+        
         
         String currVal = (String) myValueHolder;        
         if(currVal != null)
@@ -46,14 +50,15 @@ public with sharing class EnhancedMultiselectController extends EnhancedComponen
         '            }\n' +     
         '         });\n';
             
-        
+        initializePicklistVals();
         pageController.addJavascriptMethods(updateHiddenField);
         addOnLoadJavascriptToParentController(initialize);
         return '';
     }
     
-      public List<PicklistVal> getPickListValues() {    
-        System.debug('GETPICKLISTVAL');
+    public void initializePicklistVals()
+    {
+    	        System.debug('GETPICKLISTVAL');
         if(picklistSO == null && picklistEntries == null && myObject != null)  
         {
             System.debug('GRABBING');
@@ -70,7 +75,7 @@ public with sharing class EnhancedMultiselectController extends EnhancedComponen
         }
         else if (picklistSO == null && picklistEntries != null)
         {
-                    System.debug('USING PASSED');
+                 System.debug('USING PASSED');
                 picklistSO = new List<SelectOption>();
                 SelectOption so;
                 //so = new SelectOption('','--Select--');  
@@ -91,6 +96,9 @@ public with sharing class EnhancedMultiselectController extends EnhancedComponen
         for(SelectOption so : picklistSO)
             picklistVals.add(new PicklistVal(so, currVals));
 	        
+    	
+    }
+      public List<PicklistVal> getPickListValues() {    
         return picklistVals;
           
     }

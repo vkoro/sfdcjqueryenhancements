@@ -3,30 +3,41 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 	public String displayColumn 	{ get; set; }
 	public String objectToLookup 	{ get; set; }
 	public String displayName 		{ get; set; }
+	
 	private String jsonData;
+	private Map<String,String> values;
+	
+	//Need for testing to avoid "Too many query rows" error
+	public Integer jsonRecordLimit = 2000;
+	
+	public void setJsonRecordLimit(Integer jsonRecordLimit) {
+		this.jsonRecordLimit = jsonRecordLimit;
+	}
 	
 	public String getOnLoad(){
 
 		onLoad();
+		
 
 		if (displayColumn == null)
 			displayColumn = 'name';
 			
 		String jsonData = getJson();
 						  						
-		String initialize = 'var l' + fieldName + 'data = ' + jsonData + ';\n' +
+		String initialize = 'var ' + uid + 'data = ' + jsonData + ';\n' +
 							
-							'$(".L' + fieldName + '").autocomplete(l' + fieldName + 'data, { \n' +
+							'$(".L' + uid + '").autocomplete(' + uid + 'data, { \n' +
 							'\n' + 			
 							'						 formatItem: function(item) {  \n' +
 							'						   return item.'+ displayColumn + ';      \n' +
 							'						   }   \n' +
 							'\n' +
 							'						 }).result(function(event, item) {\n' +
-							'								  $(".S' + fieldName + ' :input:hidden:first").val(item.id);\n' +
+							'								  $(".' + uid + '").val(item.id);\n' +
 							'								});  \n';
-  
-		
+							if (myValueHolder != null)
+									initialize += 	'$(".' + uid + '").val("' + (String) myValueHolder + '");\n';
+		    
 
 		addOnLoadJavascriptToParentController(initialize);
 		return '';
@@ -40,7 +51,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
      {
      	if (jsonData == null) 
      	{
-
+			values = new Map<String,String>();
 	     	jsonData = '';
 			try {
 				System.debug('getJsonifiedObjectRecords for:' + fieldname + ' ' + objectToLookup );
@@ -53,7 +64,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 				else
 					columns.add('name');   
 				  
-				String queryString = 'Select id, ' + displayColumn + ' from ' + objectToLookup + ' limit 1000';
+				String queryString = 'Select id, ' + displayColumn + ' from ' + objectToLookup + ' limit ' + jsonRecordLimit;
 				System.debug('queryString:' + queryString);
 				List<sObject> sos = Database.query(queryString);
 				//Map<String, Schema.SObjectField> columns = sos.getSObjectType().getDescribe().fields.getMap();
@@ -95,6 +106,15 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
         return jsonData;
       	}
       	
+  public override Object getCastedValue() {
+  	
+  	String s = (String) myValueHolder;
+  	if(s == '')
+  		return null;
+  	else
+	 	return myValueHolder;
+  }
+     
 
 	
 

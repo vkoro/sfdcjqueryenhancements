@@ -11,11 +11,32 @@
     <apex:attribute name="validateAs" description="This is the type of validation that will be applied" type="String" required="false" assignTo="{!validateAs}" />
     <apex:attribute name="required" description="Is this field required?" type="Boolean" required="false" assignTo="{!required}" />
     <apex:attribute name="hidden" description="Is this text hidden?" type="Boolean" required="false" assignTo="{!hidden}" />
+    <apex:attribute name="maxLength" description="Max length of field" type="String" required="false" assignTo="{!maxLength}" />
+    <apex:attribute name="minLength" description="Minimum length of field" type="String" required="false" assignTo="{!minLength}" />
     <apex:attribute name="defaultValue" description="default value for field, will display and override other values" type="String" required="false" assignTo="{!defaultValue}" />
+    <apex:attribute name="downgrade" description="Should enhanced features be disabled?" required="false" type="Boolean" assignTo="{!downgrade}" />
+    <apex:attribute name="requiresVerification" description="Should a second field verifying the first be displayed?" required="false" type="Boolean" assignTo="{!requiresVerification}" />
+    <apex:attribute name="maskedInput" description="Should fields be displayed with masked input?" required="false" type="Boolean" assignTo="{!maskedInput}" />
 
 
     {!onLoad}
       
-   <apex:inputText styleClass="T{!fieldName}" value="{!myValueHolder}" />
+    <apex:outputPanel rendered="{!downgrade != true}">
 
+            <apex:outputPanel rendered="{!maskedInput}">   
+            
+                <script type="text/javascript" src="{!$Resource.JQMaskedInput122}" />
+        
+            </apex:outputPanel>
+
+       <apex:inputText styleClass="{!uid} T{!fieldName}" value="{!myValueHolder}" />
+       
+     </apex:outputPanel> 
+     <apex:outputPanel rendered="{!downgrade == true}">
+     
+           <apex:inputText styleClass="{!uid} T{!fieldName}" value="{!myValueHolder}" />
+        
+     </apex:outputPanel>
+     
+       
 </apex:component>

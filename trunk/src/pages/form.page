@@ -1,25 +1,14 @@
-<!--     
-Copyright notice at page bottom
--->
-   
 <apex:page controller="FormDisplayController" showheader="false">
-    
-    
-    <style type="text/css">
-     
-        #container {position: relative; width: 100%; margin:15px 15px; }
         
-    </style>
-  
+	    <style type="text/css">
+	     
+	        #container {position: relative; width: 100%; margin:15px 15px; }
+	        
+	    </style>
 
          <div id="container">
                                       
-              <div id="formDisplay">
-                   <c:Form formname="{!form.name}" onCompleteJavascript="$('#formDisplay').hide();$('#finishedDisplay').show();" pageController="{!this}" /> 
-              </div>     
-              <div id="finishedDisplay" style="display:none">
-                  <apex:outputField value="{!form.Finished_Blurb__c}" />          
-              </div>
+             <c:Form formname="{!formname}" pageController="{!this}" /> 
               
          </div>
 

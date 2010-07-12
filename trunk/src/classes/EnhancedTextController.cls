@@ -2,9 +2,12 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 
 	public String validateAs	 { get; set; }
 	public String maxLength 	 { get; set; }
-
-	private List<String> frontBack;
+	public String minLength 	 { get; set; }
+	public Boolean maskedInput 	 { get; set; }
+	public Boolean requiresVerification { get; set; }
 	
+	private List<String> frontBack;
+	    
 	// because there is no true onload allowed for components
 	// and the constructor is run before the setters on attributes
 	public String getOnLoad(){
@@ -14,6 +17,8 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 		  
 		  String s = (String) myValueHolder;
 		  System.debug('val: ' + s );
+		  
+		  // Necessary since Integers will otherwise be displayed in the format 'x.0'   
 		  if (s != null) {
 				// split only works some of the time
 				// see: http://community.salesforce.com/t5/Apex-Code-Development/String-split-method-works-only-some-of-the-time/m-p/185684#M30085 
@@ -48,87 +53,81 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 			  }
 		  }
 		  
-		  Boolean valRuleAdded = false;  
-		  String validationString = '';
-		  if(validateAs != null)
+		  String onLoadJS = '';
+		  additionalValRules = '';
+		  System.debug('VALIDATE AS:' + validateAs);
+		  if(validateAs != null && validateAs != '')
 		  {
+		  	  validateAs = validateAs.replace(' ','').toUpperCase();  
+			  System.debug('VALIDATE AS:' + validateAs);
+			  System.debug('MASKED:' + maskedInput);
 		  	
-	          if (validateAs.toUpperCase() == 'URL') 
+	          if (validateAs == 'URL') 
 	          {
-	          	validationString += 'url: true, maxlength: 255';
-	          	valRuleAdded = true;
+	          	additionalValRules += 'url: true, maxlength: 255';
 	          }   
-	          else if (validateAs.toUpperCase() == 'NUMBER') 
+	          else if (validateAs == 'NUMBER') 
 	          {
-	          	validationString += 'number: true';
-	          	valRuleAdded = true;
+	          	additionalValRules += 'number: true';
 	          }   
-	          else if (validateAs.toUpperCase() == 'EMAIL') 
+	          else if (validateAs == 'EMAIL') 
 	          {
-	          	validationString += 'email: true';
-	          	valRuleAdded = true;
+	          	additionalValRules += 'email: true';
 	          }   
-	          else if (validateAs.toUpperCase() == 'PHONEUS') 
+	          else if (validateAs == 'PHONEUSMASKED')
 	          {
-	          	validationString += 'phone: true';
-	          	valRuleAdded = true;
+	          	onLoadJS += '$(".' + uid + '").mask("(999) 999-9999");\n';
 	          }
-	          else if (validateAs.toUpperCase() == 'CURRENCY') 
+	          else if (validateAs == 'PHONEUS'  || validateAs == 'USPHONE' || validateAs == 'PHONE' ) 
 	          {
-	          	validationString += 'currency: true';
-	          	valRuleAdded = true;
+	          	if(maskedInput)
+	          		onLoadJS += '$(".' + uid + '").mask("(999) 999-9999");\n';
+	          	else
+					additionalValRules += 'phone: true';
 	          }
-	          else if (validateAs.toUpperCase() == 'PERCENT' || validateAs.toUpperCase() == 'PERCENTAGE') 
+	          else if (validateAs == 'CURRENCY') 
 	          {
-	          	validationString += 'percentage: true';
-	          	valRuleAdded = true;
+	          	additionalValRules += 'currency: true';
 	          }
-	          
-	          else if (validateAs.toUpperCase() == 'INTERNATIONALPHONE' || validateAs.toUpperCase() == 'PHONE') 
+	          else if (validateAs == 'PERCENT' || validateAs == 'PERCENTAGE') 
 	          {
-	          	validationString += 'internationalPhone: true';
-	          	valRuleAdded = true;
+	          	additionalValRules += 'percentage: true';
 	          }
-	          else if (validateAs.toUpperCase() == 'NAME') 
+	          else if (validateAs == 'INTERNATIONALPHONE') 
 	          {
-	          	validationString += 'allCapsDisallowed: true,\n' +
+	          	additionalValRules += 'internationalPhone: true';
+	          }
+	          else if (validateAs == 'NAME') 
+	          {
+	          	additionalValRules += 'allCapsDisallowed: true,\n' +
 	          						'allLowercaseDisallowed: true,\n' +
 	          						'ASCIIOnly: true\n';  
-	          	valRuleAdded = true;
+	          }
+	          else if (validateAs == 'ZIP' || validateAs == 'ZIPCODE' ) 
+	          {
+	          	additionalValRules += 'postalcode: true';
 	          }
 	          else 
-	          {
-	          	validationString += 'maxlength: 255';
-	          	valRuleAdded = true;
-	          	
-	          }
+	          	additionalValRules += validateAs.toLowerCase() + ': true';
+
+	          
 	          
 		  }  
 	                                     
-           if(maxLength != null) {
-           		if(valRuleAdded)
-           			validationString += ', ';
-           		else
-           		  valRuleAdded = true;
-           		validationString += 'maxlength: ' + maxlength; 
+           if(maxLength != null && maxLength != '') {
+           		if(additionalValRules != '')
+           			additionalValRules += ', ';
+           		additionalValRules += 'maxlength: ' + maxlength; 
            }
-           System.debug('TESTINGREQ');
-           if(required == true) {
-          		 System.debug('REQ!!');
-           	    if(valRuleAdded)
-           			validationString += ', ';
-           		else
-           		  valRuleAdded = true;
-           		validationString += 'required: true'; 
+           
+           if(minLength != null && minLength != '') {
+           		if(additionalValRules != '')
+           			additionalValRules += ', ';
+           		additionalValRules += 'minlength: ' + minLength; 
            }
-           	
-		if(validationString != '')
-		{
-			String initialize = '$(".T' + fieldName + '").rules("add", \n' +   
-										' { ' + validationString + ' });\n';  
-			
-			addOnLoadJavascriptToParentController(initialize);
-		}
+                   	
+		addOnLoadJavascriptToParentController(onLoadJS);
+
 		return '';
 	}
 	

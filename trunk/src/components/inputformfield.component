@@ -5,64 +5,55 @@
       <apex:attribute name="pageController" 
           type="PageControllerBase" 
           assignTo="{!pageController}"   
-          required="true" 
-          description="The controller for the page." />  
-      
+          required="true"     
+          description="The controller for the page." /> 
+    <apex:attribute name="useEnhancedDatepicker" description="Should we use the enhanced Datepicker?" type="Boolean" required="false" assignTo="{!useEnhancedDatepicker}" />
+    <apex:attribute name="useEnhancedPicklist" description="Should we use the enhanced Picklist" type="Boolean" required="false"  assignTo="{!useEnhancedPicklist}" />
+    <apex:attribute name="useEnhancedMultiselect" description="Should we use the enhanced Multiselect" type="Boolean" required="false"   assignTo="{!useEnhancedMultiselect}" />
+    <apex:attribute name="useEnhancedText" description="Should we use the enhanced Text?" type="Boolean" required="false"   assignTo="{!useEnhancedText}" />  
+    <apex:attribute name="useEnhancedLookup" description="Should we use the enhanced Lookup?" type="Boolean" required="false" assignTo="{!useEnhancedLookup}" />
+    <apex:attribute name="useEnhancedTextarea" description="Should we use the enhanced Textarea?" type="Boolean" required="false" assignTo="{!useEnhancedTextarea}" />
+
+  
     <apex:outputPanel rendered="{!field.Hidden__c == false}">
-   		 <span class="cf{!order}">  
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Text'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pagecontroller}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Email'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Email" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'URL'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="URL" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Number'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Number" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Percent'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  validateAs="Percent" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Currency'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Currency" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Phone'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Percent" pageController="{!pageController}"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Name'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Name" pageController="{!pageController}"  />
-                    <c:enhancedTextarea fieldName="{!field.name}" rendered="{!field.Type__c == 'Textarea'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  pageController="{!pageController}" />
-                    <c:enhancedCheckbox fieldName="{!field.name}" rendered="{!field.Type__c == 'Checkbox'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  pageController="{!pageController}" />
-                    <c:enhancedDatepicker fieldName="{!field.name}" rendered="{!field.Type__c == 'Date'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" />
-                    <c:enhancedLookup fieldName="{!field.name}" rendered="{!field.Type__c == 'Lookup'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  objectToLookup="{!field.Object_Name__c}" pageController="{!pageController}"/>
-                    <c:enhancedSelect fieldName="{!field.name}" rendered="{!field.Type__c == 'Picklist'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}"/>      
-                    <c:enhancedMultiselect fieldName="{!field.name}" rendered="{!field.Type__c == 'Multi-Select'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}"/>    
-		</span>
-	</apex:outputPanel>
-	<apex:outputPanel rendered="{!field.Hidden__c == true}">
+   		 <span class="cf{!order}">    
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Text'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="{!field.Validate_As__c}" pageController="{!pagecontroller}" downgrade="{!useEnhancedText == false}" />     
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Email'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="Email" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'URL'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="URL" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Number'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="Number" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Percent'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="Percent" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Currency'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="Currency" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Phone'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="{!field.Validate_As__c}" maskedInput="{!field.Masked_Input__c}" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Name'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" validateAs="Name" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Zipcode'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Zipcode" maxLength="{!field.Max_Length__c}" minLength="{!field.Minimum_Length__c}" pageController="{!pageController}" downgrade="{!useEnhancedText == false}" />
+                    <c:enhancedTextarea fieldName="{!field.name}" rendered="{!field.Type__c == 'Textarea'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  pageController="{!pageController}" downgrade="{!useEnhancedTextarea == false}" />
+                    <c:enhancedCheckbox fieldName="{!field.name}" rendered="{!field.Type__c == 'Checkbox'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  pageController="{!pageController}" />
+                    <c:enhancedDatepicker fieldName="{!field.name}" rendered="{!field.Type__c == 'Date'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" minDate="{!field.Minimum_Date__c}" maxDate="{!field.Maximum_Date__c}" downgrade="{!useEnhancedDatepicker == false}" />
+                    <c:enhancedLookup fieldName="{!field.name}" rendered="{!field.Type__c == 'Lookup'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  objectToLookup="{!field.Object_Name__c}" pageController="{!pageController}" downgrade="false" />  
+                    <c:enhancedSelect fieldName="{!field.name}" rendered="{!field.Type__c == 'Picklist'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" downgrade="{!useEnhancedPicklist == false}" isNumber="{!true == false}"/>      
+                    <c:enhancedSelect fieldName="{!field.name}" rendered="{!field.Type__c == 'NumberPicklist'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" downgrade="{!useEnhancedPicklist == false}" isNumber="{!true == true}"/>      
+                    <c:enhancedMultiselect fieldName="{!field.name}" rendered="{!field.Type__c == 'Multi-Select'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" downgrade="{!useEnhancedMultiselect == false}"/>    
+  
+		</span>  
+	</apex:outputPanel>    
+	
+	<apex:outputPanel rendered="{!field.Hidden__c == true}">  
    		 <span class="cf{!order}" style="display:none">  
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Text'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pagecontroller}" hidden="true" />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Email'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Email" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'URL'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  validateAs="URL" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Number'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Number" pageController="{!pageController}" hidden="true"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Percent'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Percent" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Currency'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Currency" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Name'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" validateAs="Name" pageController="{!pageController}" hidden="true"  />
-                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Phone'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  validateAs="Percent" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedTextarea fieldName="{!field.name}" rendered="{!field.Type__c == 'Textarea'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedCheckbox fieldName="{!field.name}" rendered="{!field.Type__c == 'Checkbox'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedDatepicker fieldName="{!field.name}" rendered="{!field.Type__c == 'Date'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" hidden="true" />
-                    <c:enhancedLookup fieldName="{!field.name}" rendered="{!field.Type__c == 'Lookup'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  objectToLookup="{!field.Object_Name__c}" pageController="{!pageController}" hidden="true"/>
-                    <c:enhancedSelect fieldName="{!field.name}" rendered="{!field.Type__c == 'Picklist'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" hidden="true"/>      
-                    <c:enhancedMultiselect fieldName="{!field.name}" rendered="{!field.Type__c == 'Multi-Select'}" required="{!field.Required__c}" defaultValue="field.Default_Value__c"  pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" hidden="true"/>    
-		</span>
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Text'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pagecontroller}" hidden="true" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Email'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Email" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'URL'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  validateAs="URL" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Number'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Number" pageController="{!pageController}" hidden="true"  />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Percent'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Percent" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Currency'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Currency" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Name'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" validateAs="Name" pageController="{!pageController}" hidden="true"  />
+                    <c:enhancedText fieldName="{!field.name}" rendered="{!field.Type__c == 'Phone'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  validateAs="Percent" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedTextarea fieldName="{!field.name}" rendered="{!field.Type__c == 'Textarea'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedCheckbox fieldName="{!field.name}" rendered="{!field.Type__c == 'Checkbox'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedDatepicker fieldName="{!field.name}" rendered="{!field.Type__c == 'Date'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" hidden="true" />
+                    <c:enhancedLookup fieldName="{!field.name}" rendered="{!field.Type__c == 'Lookup'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  objectToLookup="{!field.Object_Name__c}" pageController="{!pageController}" hidden="true"/>
+                    <c:enhancedSelect fieldName="{!field.name}" rendered="{!field.Type__c == 'Picklist'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}" pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" hidden="true"/>      
+                    <c:enhancedMultiselect fieldName="{!field.name}" rendered="{!field.Type__c == 'Multi-Select'}" required="{!field.Required__c}" defaultValue="{!field.Default_Value__c}"  pageController="{!pageController}" picklistEntries="{!field.PicklistEntries__c}" hidden="true"/>    
+		</span>  
 	</apex:outputPanel>  
 		
 </apex:component>
-  
-<!--
-    Copyright (c)2009, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
-    All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-    Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-    Neither the name of the�salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-    
-    MOD jdietz@gmail.com 04/19/2010
--->

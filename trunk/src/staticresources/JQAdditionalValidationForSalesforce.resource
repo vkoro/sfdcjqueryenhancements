@@ -93,7 +93,9 @@
     			jQuery.validator.addMethod("percentage", function(value, element) {
 					return this.optional(element) || /^\s*((-){0,1}(\d{0,})(\.?(\d*)))?\s*\%?\s*$/.test(value);
 				}, "Please enter a percentage");    
-				
+				jQuery.validator.addMethod("postalcode", function(postalcode, element) {
+					return this.optional(element) || postalcode.match(/(^\d{5}(-\d{4})?$)|(^[ABCEGHJKLMNPRSTVXYabceghjklmnpstvxy]{1}\d{1}[A-Za-z]{1} ?\d{1}[A-Za-z]{1}\d{1})$/);
+				}, "Please specify a valid postal/zip code");
 				
 				
 				

@@ -41,6 +41,12 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Default_Value__c</fullName>
+        <label>Default Value</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
         <fullName>Form__c</fullName>
         <label>Form</label>
         <referenceTo>Form__c</referenceTo>
@@ -65,14 +71,50 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Info__c</fullName>
+        <description>Custom html block to be displayed if the field type is Info</description>
+        <label>Info</label>
+        <length>32000</length>
+        <type>Html</type>
+        <visibleLines>25</visibleLines>
+    </fields>
+    <fields>
         <fullName>Label__c</fullName>
         <label>Label</label>
         <length>255</length>
         <type>Text</type>
     </fields>
     <fields>
+        <fullName>Masked_Input__c</fullName>
+        <defaultValue>true</defaultValue>
+        <description>Certain fields (phone numbers, etc.) will display a mask that only allows entry in a certain format.</description>
+        <label>Masked Input</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Max_Length__c</fullName>
         <label>Max Length</label>
+        <precision>5</precision>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Maximum_Date__c</fullName>
+        <description>Latest date that can be allowed for a text field</description>
+        <label>Maximum Date</label>
+        <length>15</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Minimum_Date__c</fullName>
+        <description>Earliest date to be allowed for entry on a Date field</description>
+        <label>Minimum Date</label>
+        <length>15</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Minimum_Length__c</fullName>
+        <label>Minimum Length</label>
         <precision>5</precision>
         <scale>0</scale>
         <type>Number</type>
@@ -110,6 +152,12 @@
         <description>Creates second field which must match the first.</description>
         <label>Requires Verification</label>
         <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Tooltip__c</fullName>
+        <label>Tooltip</label>
+        <length>80</length>
+        <type>Text</type>
     </fields>
     <fields>
         <fullName>Type__c</fullName>
