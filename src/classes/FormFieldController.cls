@@ -21,7 +21,16 @@ public class FormFieldController {
 	//workaround for bug #W-638516
 	public PageReference pagetemplatename {get;set;}
 	public PageControllerBase pageController { get; set; }
-	
+
+
+    public Boolean useEnhancedDatepicker { get; set; }
+    public Boolean useEnhancedPicklist { get; set; }
+    public Boolean useEnhancedMultiselect { get; set; }
+    public Boolean useEnhancedText { get; set; }
+    public Boolean useEnhancedLookup { get; set; }
+    public Boolean useEnhancedTextarea { get; set; }
+    
+    
 	//CONSTRUCTOR
 	public FormFieldController() {
 		//workaround for bug #W-638516

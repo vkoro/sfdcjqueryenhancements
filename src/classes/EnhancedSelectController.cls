@@ -2,12 +2,20 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
 	
 	public String picklistEntries { get; set; }
 	List<PicklistVal> picklistVals;
-	List<SelectOption> picklistSO;
+	public List<SelectOption> picklistSO { get; set; }
 	String[] currVals = new List<String>();
+	public Boolean isNumber { get; set; }
 	
+	public void setIsNumber(Boolean isNumber) {
+		System.debug(LoggingLevel.WARN, 'TRYING TO SET ISNUMBER TO ' + isNumber);
+		if (isNumber != null)
+			this.isNumber = isNumber;		
+	}
+
 	// because there is no true onload allowed for components
 	// and the constructor is run before the setters on attributes
 	public String getOnLoad(){
+	
 		  
 		onLoad();
 		  
@@ -16,38 +24,35 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
 			currVals = currVal.split(';', 0);	
 		  
 		String updateHiddenField = 'function updateSL' + fieldName + '() { \n' + 
-		'                $("#S' + fieldName + ' :hidden:input:first").val(""); \n' + 
 		'                $("#SL' + fieldName + ' option:selected")' +
 										  '.each(function(k,l) {\n' +
 		'                var checkedVal = $(this).val();\n' + 
-		'                var currValue = $("#S' + fieldName + ' :hidden:input:first").val();\n' +
-		'                $("#S' + fieldName + ' :hidden:input:first").val(currValue + checkedVal + "");\n' +
+		'                $("#S' + fieldName + ' :hidden:input:first").val(checkedVal + "");\n' +
 		'                   } );\n' +
 		'                 } \n';  
 
 		String initialize = '$("#SL' + fieldName + '-button").remove(); \n' +   //if the element already exists remove it
-		'                 $("#SL' + fieldName + '").selectmenu()' +   
+		'                 $("#SL' + fieldName + '").selectmenu({\n' +
+		'					width: 150\n' +
+		'					})' +   
 		 					 '.bind("change", function(){\n' + 
 		'                     updateSL' + fieldName + '();\n' +
 		'                  }\n' + 
 		'                );\n';
 
 
-		/*
-		String initialize = '$("#SL' + fieldName + '").selectmenu(' +   
-		   '{\n' +
-			'onChange: function(){\n' + 
-			 'updateSL' + fieldName + '();\n' +
-				 '}\n' + 
-			' });\n'; */
+		initPicklistVals();
+		
 		
 		pageController.addJavascriptMethods(updateHiddenField);
 		addOnLoadJavascriptToParentController(initialize);
 		return '';
+		
 	}
 	
-      public List<PicklistVal> getPickListValues() {    
-        System.debug('GETPICKLISTVAL');
+	public void initPicklistVals() {
+		
+		System.debug('initPicklistVals');
         if(picklistSO == null && picklistEntries == null && myObject != null)  
         {
             System.debug('GRABBING');
@@ -84,12 +89,36 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
         picklistVals = new List<PicklistVal>();
         for(SelectOption so : picklistSO)
             picklistVals.add(new PicklistVal(so, currVals));
+		
+		
+	}
+	
+      public List<PicklistVal> getPickListValues() {    
 	        
         return picklistVals;
           
     }
     
-    
+	public override Object getCastedValue()      
+	{	
+			  System.debug(Logginglevel.WARN, 'ISNUMBER:' + isNumber);
+			  
+			  String mvhs = (String) myValueHolder;
+			  if(myValueHolder == null || mvhs.length() == 0)
+			  	return null;
+			  	
+	          if (isNumber != null && isNumber == true)   
+	          {
+	          	mvhs = mvhs.replaceAll('%','');
+				Double d = Double.valueOf(mvhs);  
+				return d;     
+	          }   
+	          else 
+	          	return myValueHolder;
+	          
+	}
+
+
 	
 
 }

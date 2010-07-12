@@ -1,9 +1,16 @@
 public with sharing class EnhancedCheckboxController extends EnhancedComponentController{
 	
 	public String getOnLoad(){
-		
+
+
+		//We overwrite the passed value since it means nothing for the checkbox to be required (we treat it the same way as the checkbox)
+        required = false;
+
 		onLoad();
+				
 		String v = (String) myValueHolder;
+		System.debug('ENHANCECHECK ' + v);
+		
 		if(v != null && v != '')
 		{
 			v = v.toUpperCase();

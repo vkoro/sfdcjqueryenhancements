@@ -157,8 +157,8 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
                       <td class="value"><c:enhancedText pageController="{!this}" fieldName="Percent__c" validateAs="percent" /></td>    
                   </tr>   
                   <tr>
-                      <td class="label"><apex:outputLabel value="Phone" /></td>             
-                      <td class="value"><c:enhancedText pageController="{!this}" fieldName="Phone__c" validateAs="phoneus" /></td>    
+                      <td class="label"><c:enhancedLabel for="Phone" label="Phone" tooltip="Your phonenumber" renderIcon="true" /></td>             
+                      <td class="value"><c:enhancedText pageController="{!this}" fieldName="Phone__c" validateAs="phoneus" maskedInput="true" /></td>    
                   </tr>   
                   <tr>
                       <td class="label"><apex:outputLabel value="Picklist" /></td>             

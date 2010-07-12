@@ -1,39 +1,54 @@
 public class formCreatorController extends PageControllerBase {
 
     //Params
-    public String fname 					{ get; set; }
-    public Integer position 				{ get; set; }
-    public String mode 						{ get; set; }
-	
-    public Form__c webform 					{ get; set; }  
-    
+    public String fname 							{ get; set; }
+    public Integer position 						{ get; set; }
+
+    public Form__c webform 							{ get; set; }  
+    public Form_Field__c ff 						{ get; set; }
+    public String mode 								{ get; set; }
+
     Map<String, Schema.SObjectType> gd;
     public List<SObjectType> tokens = new List<SObjectType>();
-    public List<String> objectlabels 		{ get; set;}
-    public SObjectType sot 					{ get; set; } 
-    public List<SelectOption> objectSelectOptions { get; set; }
-    public String selectedObject 			{ get; set; } 
-    public String selectedObjectLabel 		{ get; set; } 
+    public List<String> objectlabels 				{ get; set;}
+    public SObjectType sot 							{ get; set; } 
+    public List<SelectOption> objectSelectOptions 	{ get; set; }
+    public String selectedObject 					{ get; set; } 
+    public String selectedObjectLabel 				{ get; set; } 
 
-    public List<SelectOption> recordSelectOptions { get; set; }
-    public String selectedRecord 			{ get; set; } 
+    public List<SelectOption> recordSelectOptions 	{ get; set; }
+    public String selectedRecord 					{ get; set; } 
+    public List<Form_Field__c> objectFields 		{ get; set; }
+    public List<Form_Field__c> formFields 			{ get; set; }
 
-    public List<Form_Field__c> objectFields { get; set; }
-    public List<Form_Field__c> formFields 	{ get; set; }
-
+    public Boolean displayPopup 					{ get; set; }
+	
     public Integer HeaderFieldCount = 0;
+    public Integer InfoFieldCount = 0;
+   	public List<String> dateFields 				{ get; set; }
    
     public FormController myComponentController { get; set; }  
         
-    
     //CONSTRUCTOR
     public formCreatorController(ApexPages.StandardController stdController) {
+    	init();
+	}
+	
+	public formCreatorController() {
+    	init();
+	}
+	
+    public void init() {
+    	
+    	dateFields = new List<String>();
     	
     	position = 1000;
+        displayPopup = false;
         gd = Schema.getGlobalDescribe();        
         tokens = gd.values(); //get the tokens from this map
         objectlabels = new List<String>();
         objectSelectOptions = new List<SelectOption>();
+        ff = new Form_Field__c();
         
          for(SObjectType s:gd.values()) {
        if(!acceptedObject(s)) continue;
@@ -47,16 +62,29 @@ public class formCreatorController extends PageControllerBase {
         
         String webformid = System.currentPageReference().getParameters().get('id');
         if(webformid != null) {      
-            webform = [select Id, Name, Object_Name__c, Object_Label__c, Finished_Blurb__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Save_Button_Text__c, Text_Color__c, Style__c, Default_Record__c from Form__c where Id = :webformid];          
+            webform = [select Id, Name, Object_Name__c, Object_Label__c, Finished_Blurb__c, Return_URL__c, Description__c, Title__c, Background_Color__c, Save_Button_Text__c, Text_Color__c, 
+            		Style__c, Default_Record__c,  Use_Enhanced_Datepicker__c, Use_Enhanced_Lookup__c, Use_Enhanced_Multiselect__c, Use_Enhanced_Picklist__c, Use_Enhanced_Text__c, Use_Enhanced_Textarea__c
+            	    from Form__c where Id = :webformid];          
+            myObject = webform;
             selectedObject = webform.Object_Name__c;
             selectObject();
-            formFields = [Select f.Form__c, f.Type__c, f.Required__c, f.APIRequired__c, f.PicklistEntries__c, f.Order__c, f.Name, f.Label__c, f.Hidden__c, f.Width__c, f.Id
-                             from Form_Field__c f where f.Form__c = :webform.Id order by f.Order__c];
+            formFields = [Select f.Form__c, f.Type__c, f.Required__c, f.Validate_as__c, f.APIRequired__c, 
+            			f.PicklistEntries__c, f.Order__c, f.Name, f.Label__c, f.Hidden__c, f.Width__c, f.Id,
+            			f.Minimum_Date__c, f.Maximum_Date__c, f.Info__c,
+            			Minimum_Length__c, Max_Length__c  
+                        from Form_Field__c f where f.Form__c = :webform.Id order by f.Order__c];
 
             for(Form_Field__c formfield:formFields) {
 
                 if(formfield.Type__c == 'Header') HeaderFieldCount++;
-                
+                if(formfield.Type__c == 'Info')  InfoFieldCount++;
+           		if(formfield.Type__c == 'Date')	
+           			{ 
+           				String i = String.valueOf(formfield.Order__c);
+           				i = i.subString(0,i.length());
+           				dateFields.add(i);
+           			}
+           		
                 for(Integer i = 0; i < objectFields.size();i ++) {
                     Form_Field__c objectField = objectFields.get(i);
                     if(formField.Name == objectField.Name) objectFields.remove(i);
@@ -66,18 +94,23 @@ public class formCreatorController extends PageControllerBase {
         //create a new webform if no id is passed in the url
         else {
             webform = new Form__c();
-            
+            myObject = webform;
             sot = Schema.SObjectType.Contact.getSObjectType();
             selectedObject = 'Contact';
             selectedObjectLabel = 'Contact';
             selectObject();             
-            webform.Background_Color__c = '#FFFFFF';
-            webform.Text_Color__c = '#000000';
             webform.Save_Button_Text__c = 'Submit';            
 	        updateRecords();
         }
         webform.SavedByWebformEditor__c = true;
         
+    }
+    public void enablePopup() {
+    	displayPopup = true;
+    }
+    
+    public String getX(String x) {
+    	return x;
     }
     
     private void preloadReqFields(){
@@ -150,7 +183,8 @@ public class formCreatorController extends PageControllerBase {
         
         for(Integer i = 0; i < objectFields.size();i++) {
             Form_Field__c ff = objectFields.get(i);
-            if(ff.Name == fieldname) {
+            if(ff.Name == fieldname)
+             {
                 DescribeFieldResult dfr = sot.getDescribe().fields.getMap().get(fieldname).getDescribe();
                 String picklistvalues = '';
                 String fieldType = dfr.getType().name();
@@ -170,16 +204,18 @@ public class formCreatorController extends PageControllerBase {
 
                 Form_Field__c field = objectFields.remove(i);
                 field.PicklistEntries__c = picklistvalues;
-                ///give this a very high order to make sure the reorder puts it add the end of the list. Jquery will then give them correct sequential numbers in the interface anyway.
                 ff.Order__c = position;
                 incrementFormFields(field);
                 formFields.add(field);
                 reOrderFormFields();
+                ///give this a very high order to make sure the reorder puts it add the end of the list. Jquery will then give them correct sequential numbers in the interface anyway.
                 position = 1000;
                 break;
             }
         }       
+
         reOrderFormFields();
+
         return null;
     }
     
@@ -189,6 +225,21 @@ public class formCreatorController extends PageControllerBase {
         formFields.add(f);
         reOrderFormFields();
         return null;
+    }
+        
+
+    public PageReference addInfo() {
+    	
+        InfoFieldCount++; //for keeping the name unique, needed for move up/down. These rely on the fieldname
+        ff.name = 'Info' + InfoFieldCount;
+        ff.Label__c = 'Info' + InfoFieldCount;
+        ff.Type__c = 'Info';             
+        formFields.add(ff);
+        ff = new Form_Field__c();
+        reOrderFormFields();
+        displayPopup = false;
+        return null;
+        
     }
     
     //remove an object's field from this web form
@@ -233,15 +284,10 @@ public class formCreatorController extends PageControllerBase {
             
             upsert webform;
             
-            //attached all the form fields to the correct Web Form
-            for(Integer i = 0; i < formFields.size();i++) {
-                Form_Field__c ff = formFields.get(i);
-                if(ff.Form__c == null) ff.Form__c = webform.Id;             
-            }
+            ecSave();
             
-            System.debug(formfields);
-            upsert formfields;
-            
+			saveFields();
+			            
             //and delete the form fields that are no longer in the List
             List<ID> formFieldIds = new List<ID>();
             for(Form_Field__c field:formFields) {
@@ -254,6 +300,19 @@ public class formCreatorController extends PageControllerBase {
             ApexPages.addMessages(ex);
         }
         return new PageReference('/'+webform.Id);       
+    }
+    
+    public void saveFields()
+    {
+    	   //attached all the form fields to the correct Web Form
+            for(Integer i = 0; i < formFields.size();i++) {
+                Form_Field__c ff = formFields.get(i);
+                if(ff.Form__c == null) ff.Form__c = webform.Id;             
+            }
+            
+            System.debug(formfields);
+            upsert formfields;
+    	
     }
 
     //JAD Form preview not supported    
@@ -279,9 +338,16 @@ public class formCreatorController extends PageControllerBase {
         //from the order they're in the formFields List (and because of the 'remove', some order values might be missing
         formFields = WebformUtils.sortByOrder(formFields);
         //and now fill them up with ascending values, this will remove the 'gaps' if there are any
+        dateFields = new List <String>();        
         for(Integer i=0; i < formFields.size();i++) {
             Form_Field__c ff = formFields.get(i);
-            ff.Order__c = i + 1;            
+            ff.Order__c = i + 1;    
+       		if(ff.Type__c == 'Date')	
+       			{ 
+       				String s = String.valueOf(ff.Order__c);
+       				s = s.subString(0,s.length());
+       				dateFields.add(s);
+       			}
         }
     }  
     
@@ -289,10 +355,27 @@ public class formCreatorController extends PageControllerBase {
 	{
 		List<SelectOption> styles = new List<SelectOption>();
 		styles.add(new SelectOption('', '--SELECT--'));
-		styles.add(new SelectOption('Cupertino', 'Cupertino'));
-		styles.add(new SelectOption('Smoothness', 'Smoothness'));
-		styles.add(new SelectOption('UI Darkness', 'UI Darkness'));
-		styles.add(new SelectOption('Redmond', 'Redmond'));
+		styles.add(new SelectOption('cupertino', 'Cupertino'));
+		styles.add(new SelectOption('smoothness', 'Smoothness'));
+		styles.add(new SelectOption('start', 'Start'));
+		styles.add(new SelectOption('ui-darkness', 'UI Darkness'));
+		styles.add(new SelectOption('redmond', 'Redmond'));
+		styles.add(new SelectOption('black-tie', 'Black Tie'));
+		styles.add(new SelectOption('blitzer', 'Blitzer'));
+		styles.add(new SelectOption('dark-hive', 'Dark Hive'));
+		styles.add(new SelectOption('dot-luv', 'Dot Luv'));
+		styles.add(new SelectOption('eggplant', 'Eggplant'));
+		styles.add(new SelectOption('excite-bike', 'Excite Bike'));
+		styles.add(new SelectOption('flick', 'Flick'));
+		styles.add(new SelectOption('hot-sneaks', 'Hot Sneaks'));
+		styles.add(new SelectOption('humanity', 'Humanity'));
+		styles.add(new SelectOption('le-frog', 'Le Frog'));
+		styles.add(new SelectOption('overcast', 'Overcast'));
+		styles.add(new SelectOption('pepper-grinder', 'Pepper Grinder'));
+		styles.add(new SelectOption('south-street', 'South Street'));
+		styles.add(new SelectOption('ui-lightness', 'UI Lightness'));
+		styles.add(new SelectOption('vader', 'Vader'));
+
 		return styles;			
 
 	}
@@ -324,10 +407,6 @@ public class formCreatorController extends PageControllerBase {
             ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select fields for this form'));
             valid = false;
         }
-        //if(webform.Return_URL__c == null) {
-        //  ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Please select a return url for this form.'));
-        //  valid = false;
-        //}
         //check if the user didn't forget any required fields
         for(Form_Field__c field:objectFields) {
             if(field.Required__c == true) {
@@ -372,6 +451,32 @@ public class formCreatorController extends PageControllerBase {
         return valid;
     }
     
+    public List<SelectOption> getPhoneVal()
+	{
+		List<SelectOption> so = new List<SelectOption>();
+		so.add(new SelectOption('phoneus', 'US Phone'));
+		so.add(new SelectOption('phoneusmasked', 'US Phone (Masked)'));
+		so.add(new SelectOption('internationalphone', 'International Phone'));
+		
+		return so;
+	}
+
+
+    public List<SelectOption> getTextVal()
+	{
+		List<SelectOption> so = new List<SelectOption>();
+		so.add(new SelectOption('', '--SELECT--'));
+		so.add(new SelectOption('name', 'Name'));
+		so.add(new SelectOption('zipcode', 'Zipcode'));
+		so.add(new SelectOption('creditcard', 'Credit Card'));
+		so.add(new SelectOption('alphanumeric', 'Alphanumeric'));
+		so.add(new SelectOption('letterswithbasicpunc', 'Letters and Punctuation'));
+		so.add(new SelectOption('nowhitespace', 'No Whitespace'));
+		so.add(new SelectOption('time', 'Time'));
+		return so;
+		
+	}
+    
     //method that serves as action for the 'hidden' checkbox.
     public PageReference hiddenField() {
         //when unchecked after a value would have been defined already, the value field will disappear
@@ -380,20 +485,7 @@ public class formCreatorController extends PageControllerBase {
         
         for(Form_Field__c f:formFields) {
             if(f.Name != fieldname) continue;
-            //String ft = f.Type__c;
-   /*         f.Email_Value__c = null;        //if(ft == 'Email') 
-            f.URL_Value__c = null;          //if(ft == 'URL') 
-            f.Boolean_Value__c = false;     //if(ft == 'Checkbox') 
-            f.Date_Value__c = null;         //if(ft == 'Date') 
-            f.DateTime_Value__c = null;     //if(ft == 'DateTIME') 
-            f.Currency_Value__c = null;     //if(ft == 'CURRENCY') 
-            f.Text_Value__c = null;         //if(ft == 'Text') 
-            f.Number_Value__c = null;       //if(ft == 'Number')        
-            f.Percent_Value__c = null;      //if(ft == 'Percent') 
-            f.Text_Area_Value__c = null;    //if(ft == 'Textarea') 
-            f.Phone_Value__c = null;        //if(ft == 'PHONE') 
-            f.Picklist_Value__c = null;     //if(ft == 'Lookup') 
-            //if(ft == 'Lookup') f.Text_Value__c = null;  */
+
         }
         reOrderFormFields();
         return null;
@@ -416,6 +508,7 @@ public class formCreatorController extends PageControllerBase {
         //everything else is denied
         return false;
     }
+    
   
       //*************
     // TEST METHODS

@@ -32,14 +32,20 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <content>formGenerator</content>
-        <type>Visualforce</type>
+        <type>Default</type>
     </actionOverrides>
     <deploymentStatus>Deployed</deploymentStatus>
     <fields>
         <fullName>Background_Color__c</fullName>
         <label>Background Color</label>
         <length>10</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Default_Record__c</fullName>
+        <description>ID of object which contains the default values of the form</description>
+        <label>Default Record</label>
+        <length>20</length>
         <type>Text</type>
     </fields>
     <fields>
@@ -103,6 +109,13 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Style__c</fullName>
+        <description>JQuery UI Style</description>
+        <label>Style</label>
+        <length>80</length>
+        <type>Text</type>
+    </fields>
+    <fields>
         <fullName>Text_Color__c</fullName>
         <label>Text Color</label>
         <length>15</length>
@@ -115,6 +128,42 @@
         <label>Title</label>
         <length>255</length>
         <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Datepicker__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Use Enhanced Datepicker</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Lookup__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Use Enhanced Lookup</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Multiselect__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Use Enhanced Multiselect</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Picklist__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Use Enhanced Picklist</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Text__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>Use Enhanced Text</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Enhanced_Textarea__c</fullName>
+        <defaultValue>true</defaultValue>
+        <label>Use Enhanced Textarea</label>
+        <type>Checkbox</type>
     </fields>
     <label>Form</label>
     <listViews>
@@ -140,6 +189,20 @@
         <errorDisplayField>Name</errorDisplayField>
         <errorMessage>The &apos;Name&apos; field can not be empty.</errorMessage>
     </validationRules>
+    <webLinks>
+        <fullName>Conditional_Field_Display</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <hasScrollbars>true</hasScrollbars>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>page</linkType>
+        <masterLabel>Conditional Field Display</masterLabel>
+        <openType>newWindow</openType>
+        <page>conditionalDisplayAdmin</page>
+        <position>none</position>
+        <protected>false</protected>
+    </webLinks>
     <webLinks>
         <fullName>Preview</fullName>
         <availability>online</availability>
