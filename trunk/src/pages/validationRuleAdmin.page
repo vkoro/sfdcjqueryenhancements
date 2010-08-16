@@ -1,11 +1,11 @@
-<apex:page controller="formCreatorController" id="page" showHeader="false">
+<apex:page standardController="Form__c" extensions="formCreatorController" id="page" >
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/>
     <script type="text/javascript" src="{!URLFOR($Resource.JQDaterangepicker20, 'js/daterangepicker.jQuery.js')}"/>
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/cupertino/jquery-ui.css" />    
-    <style type="text/css">
-       
+    <style type="text/css">  
+         
        .message {
             color: red;
         } 
@@ -68,10 +68,11 @@
             <h2>Form Fields</h2>
             <table id="formfieldheader">
                 <thead class="headerRow">
-                    <tr>
+                    <tr>  
                         <th style="width:100px;">Label</th>
                         <th style="width:150px;">Type</th>
                         <th style="width:25px;">Req</th>
+                        <th style="width:40px;">Verify</th>
                         <th style="width:170px;">Validate As</th>
                         <th style="width:120px;">Values</th>
                         
@@ -101,6 +102,9 @@
                                 <apex:inputField value="{!f.Required__c}" rendered="{!NOT(f.APIRequired__c) && f.Type__c != 'Header' && f.Type__c != 'Info' }"/>
                                 <apex:outputField value="{!f.APIRequired__c}" rendered="{!f.APIRequired__c}"/>
                             </td>
+                            <td style="width:40px;border-bottom:1px solid #E3DEB8;">
+                                <apex:inputField value="{!f.Requires_Verification__c}"/>
+                            </td>
                             <td style="width:170px">&nbsp;
                                <apex:selectList rendered="{!f.Type__c == 'Text'}" value="{!f.Validate_As__c}" size="1" >
                                         <apex:selectOptions value="{!textVal}" />
@@ -122,7 +126,7 @@
                             </td>
 
 
-                        </tr>
+                        </tr>  
                     </table>                    
                 </apex:repeat>
             </div>
@@ -133,7 +137,7 @@
     <apex:outputPanel id="dateRangeInit">
 
         <script type="text/javascript">
-           function dateRangeInit()  
+           function dateRangeInit()    
            {            
             <apex:repeat value="{!dateFields}" var="do">
             

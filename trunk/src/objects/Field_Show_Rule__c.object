@@ -32,7 +32,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>Deployed</deploymentStatus>
+    <deploymentStatus>InDevelopment</deploymentStatus>
     <fields>
         <fullName>Form_Field__c</fullName>
         <label>Form Field</label>
@@ -50,6 +50,11 @@
         <type>Text</type>
     </fields>
     <label>Field Show Rule</label>
+    <listViews>
+        <fullName>All</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <label>Field Show Rule Name</label>
         <type>Text</type>

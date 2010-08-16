@@ -32,7 +32,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>Deployed</deploymentStatus>
+    <deploymentStatus>InDevelopment</deploymentStatus>
     <fields>
         <fullName>APIRequired__c</fullName>
         <defaultValue>false</defaultValue>
@@ -43,6 +43,13 @@
     <fields>
         <fullName>Default_Value__c</fullName>
         <label>Default Value</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Filter__c</fullName>
+        <description>Filter to be applied for field (Lookup, etc.) which require an additional query</description>
+        <label>Filter</label>
         <length>255</length>
         <type>Text</type>
     </fields>
@@ -59,7 +66,7 @@
         <fullName>Group__c</fullName>
         <description>Name of group for hide/show rules.</description>
         <label>Group</label>
-        <length>10</length>
+        <length>80</length>
         <type>Text</type>
     </fields>
     <fields>
@@ -76,7 +83,7 @@
         <label>Info</label>
         <length>32000</length>
         <type>Html</type>
-        <visibleLines>25</visibleLines>
+        <visibleLines>10</visibleLines>
     </fields>
     <fields>
         <fullName>Label__c</fullName>
@@ -195,14 +202,6 @@
             <sorted>false</sorted>
         </picklist>
         <type>Picklist</type>
-    </fields>
-    <fields>
-        <fullName>Width__c</fullName>
-        <description>Will hold the width in pixels for this form field. Will default to 250 if nothing is filled in.</description>
-        <label>Width</label>
-        <precision>18</precision>
-        <scale>0</scale>
-        <type>Number</type>
     </fields>
     <label>Form Field</label>
     <nameField>

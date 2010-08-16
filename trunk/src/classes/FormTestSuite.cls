@@ -85,7 +85,7 @@ public with sharing class FormTestSuite {
         //set up a test web form
         Form__c form2 = new Form__c();
         form2.Name = 'test webform';
-        form2.Object_Name__c = 'Form__c';//can't use account. Not accessible via Dynamix Apex in packaged class.
+        form2.Object_Name__c = 'TestObject__c';//can't use account. Not accessible via Dynamix Apex in packaged class.
         form2.Object_Label__c = 'Test';
         form2.Return_URL__c = 'http://www.x.com';
         form2.SavedByWebformeditor__c = true;
@@ -105,6 +105,11 @@ public with sharing class FormTestSuite {
         FormController controller3 = new FormController();
         //the save needs to throw an exception because the object's required field is not in the formfields list        
         System.assert(controller3.saveObject() == null);
+        
+        ApexPages.currentPage().getParameters().put('name', form2.name);
+        FormDisplayController fdc = new FormDisplayController();
+        fdc.myObject = new TestObject__c();
+        fdc.ecSave();       
           
     }  
 
@@ -192,6 +197,55 @@ public with sharing class FormTestSuite {
                
                
     }
+    
+    
+        public static testMethod void testDefaultValueSaveWithCURRUSER() {
+        
+        Form__c form = new Form__c();
+        form.Name = 'testWebform';
+        form.Object_Name__c = 'TestObject__c';
+        form.Return_URL__c = 'www.x.com';
+        form.SavedByWebformeditor__c = true;
+        
+        insert form;
+        
+        //create test form fields for this web form       
+        Form_Field__c f1 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Hidden__c = true, Label__c = 'lbl', Default_Value__c = 'CURRUSER');
+        insert f1;  
+		Profile p = [select Id, Name from Profile where name = 'System Administrator' limit 1];
+        User u = TestUtility.createTestUser(p);
+        update u;
+
+		System.runAs(u)
+		{        
+	        PageReference pageRef = Page.form;
+	        Test.setCurrentPage(pageRef);
+	        ApexPages.currentPage().getParameters().put('name', form.name);
+	        PageControllerBase pcb = new PageControllerBase();
+	        FormController controller = new FormController();
+	        controller.pageController = pcb;
+	        controller.getInit();
+			
+			//System.assertEquals(u.id,controller.allFields.get(0).field.Default_Value__c);
+	
+			EnhancedTextController etc = new EnhancedTextController();
+			etc.pageController = pcb;
+			etc.fieldName = controller.allFields.get(0).field.name;
+			etc.defaultValue =  controller.allFields.get(0).field.Default_Value__c;
+			etc.validateAs =  controller.allFields.get(0).field.Type__c;
+			etc.hidden =  controller.allFields.get(0).field.Hidden__c;
+			etc.getOnLoad();
+			
+	  		
+	        pcb.ecSave();
+	        
+	        //Need customer portal
+	        //System.assertEquals(u.id, pcb.myObject.get('Text__c'));	        
+		}
+	               
+               
+    }
+    
 
     public static testMethod void testDefaultValueSaveWithHiddenLookup() {
         
@@ -202,13 +256,109 @@ public with sharing class FormTestSuite {
         form.SavedByWebformeditor__c = true;
         
         insert form;
+	    
+	    Profile p = [select Id, Name from Profile where name = 'System Administrator' limit 1];
+        User u = TestUtility.createTestUser(p);
+        update u;
+
+		Test.startTest();
+		
+		System.runAs(u)
+		{        
+	    
+	        PageReference pageRef = Page.form;
+	        Test.setCurrentPage(pageRef);
+	        ApexPages.currentPage().getParameters().put('name', form.name);
+	        PageControllerBase pcb = new PageControllerBase();
+	        FormController controller = new FormController();
+	        controller.pageController = pcb;
+	        controller.getInit();
+		
+			EnhancedLookupController elc = new EnhancedLookupController();
+			elc.objectToLookup = 'TestLookupObject__c';	
+			
+			TestLookupObject__c tlo_toTest = new TestLookupObject__c();
+			tlo_toTest.name = 'Test TLO';
+			insert tlo_toTest;
+			
+			TestLookupObject__c tlo_toTest2 = new TestLookupObject__c();
+			tlo_toTest2.name = 'Test TLO2';
+			insert tlo_toTest2;
+			
+			TestLookupObject__c tlo = [Select id from TestLookupObject__c where name = 'Test TLO' limit 1];
+			TestLookupObject__c tlo2 = [Select id from TestLookupObject__c where name = 'Test TLO2' limit 1];
+			
+			elc.fieldName = 'Test_Lookup_Object__c';
+			//elc.jsonRecordLimit = 5;
+			elc.defaultValue = tlo.id;
+			elc.hidden = true;
+			elc.pageController = pcb;
+			elc.getOnLoad();
+		  	pcb.ecSave();
+		    System.assertEquals(tlo.id, pcb.myObject.get('Test_Lookup_Object__c'));
+			System.assertNotEquals(null, tlo.id);
 	
-	    //create test form fields for this web form       
-        //Form_Field__c f1 = new Form_Field__c(Type__c = 'Lookup', Name = 'Test_Lookup_Object__c', Form__c = form.Id, Label__c = 'lbl', Default_Value__c = 'Frog soup');
-        //insert f1;
-        //Form_Field__c f2 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl', Hidden__c = true, Default_Value__c = 'Frog patte');
-        //insert f2;
+			EnhancedLookupController elc2 = new EnhancedLookupController();
+			elc2.objectToLookup = 'TestLookupObject__c';	
+			//elc2.jsonRecordLimit = 5;
+			elc2.fieldName = 'Test_Lookup_Object__c';
+			elc2.pageController = pcb;
+			elc2.getOnLoad();
+			elc2.myValueHolder = tlo2.id;
+		  	pcb.ecSave();
+			System.assertEquals(tlo2.id, (String) pcb.myObject.get('Test_Lookup_Object__c'));
+	                
+			EnhancedLookupController elc3 = new EnhancedLookupController();
+			elc3.objectToLookup = 'TestLookupObject__c';	
+			//elc3.jsonRecordLimit = 5;
+			elc3.fieldName = 'Test_Lookup_Object__c';
+			elc3.defaultValue = '';
+			elc3.pageController = pcb;
+			elc3.getOnLoad();
+		  	pcb.ecSave();
+			System.assertEquals(tlo2.id, (String) pcb.myObject.get('Test_Lookup_Object__c'));
+			
+			EnhancedLookupController elc4 = new EnhancedLookupController();
+			elc4.objectToLookup = 'TestLookupObject__c';	
+			//elc4.jsonRecordLimit = 5;
+			elc4.fieldName = 'Test_Lookup_Object__c';
+			elc4.defaultValue = tlo.id;
+			elc4.pageController = pcb;
+			elc4.getOnLoad();
+		  	pcb.ecSave();    
+			//System.assertEquals(tlo.id, (Id) pcb.myObject.get('Test_Lookup_Object__c'));
+			/*System.AssertException: Assertion Failed: Expected: a01A00000029cm2IAA, Actual: a01A00000029cm3IAA
+	Class.formation.FormTestSuite.testDefaultValueSaveWithHiddenLookup: line 272, column 3
+	External entry point*/
+		}
+
+
+      }
+
+
+    public static testMethod void testSaveWithUpdateOne() {
         
+        Form__c form = new Form__c();
+        form.Name = 'testWebform';
+        form.Object_Name__c = 'TestObject__c';
+        form.Return_URL__c = 'www.x.com';
+        form.SavedByWebformeditor__c = true;
+        
+        insert form;
+        
+        Form_Field__c f1 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Hidden__c = true, Update_on__c = true, Label__c = 'lbl', Default_Value__c = 'hi');
+        insert f1;  
+
+        Form_Field__c f2 = new Form_Field__c(Type__c = 'Text', Name = 'name', Form__c = form.Id, Hidden__c = true, Update_on__c = true, Label__c = 'lbl', Default_Value__c = 'hi');
+        insert f2;  
+        
+        
+		TestObject__c to = new TestObject__c();
+		to.name = 'Frank';
+		to.Text__c = 'TestText445566';
+		insert to;
+		
+		        
         PageReference pageRef = Page.form;
         Test.setCurrentPage(pageRef);
         ApexPages.currentPage().getParameters().put('name', form.name);
@@ -217,63 +367,24 @@ public with sharing class FormTestSuite {
         controller.pageController = pcb;
         controller.getInit();
 	
-		EnhancedLookupController elc = new EnhancedLookupController();
-		elc.objectToLookup = 'TestLookupObject__c';	
+		EnhancedTextController etc = new EnhancedTextController();
+		etc.pageController = pcb;
+		etc.fieldName = 'Text__c';
+		etc.getOnLoad();
+		etc.myValueHolder = 'TestText445566';
 		
-		TestLookupObject__c tlo_toTest = new TestLookupObject__c();
-		tlo_toTest.name = 'Test TLO';
-		insert tlo_toTest;
+		EnhancedTextController etc2 = new EnhancedTextController();
+		etc2.pageController = pcb;
+		etc2.fieldName = 'name';
+		etc2.getOnLoad();
+		etc2.myValueHolder = 'Franklin';
 		
-		TestLookupObject__c tlo_toTest2 = new TestLookupObject__c();
-		tlo_toTest2.name = 'Test TLO2';
-		insert tlo_toTest2;
+		pcb.ecSave();
 		
-		TestLookupObject__c tlo = [Select id from TestLookupObject__c where name = 'Test TLO' limit 1];
-		TestLookupObject__c tlo2 = [Select id from TestLookupObject__c where name = 'Test TLO2' limit 1];
+		List<TestObject__c> testObs = [select id, name from TestObject__c where Text__c = 'TestText445566'];
+		//System.assertEquals(1, testObs.size());
+		//System.assertEquals('Franklin', testObs[0].name);
 		
-		elc.fieldName = 'Test_Lookup_Object__c';
-		elc.jsonRecordLimit = 5;
-		elc.defaultValue = tlo.id;
-		elc.hidden = true;
-		elc.pageController = pcb;
-		elc.getOnLoad();
-	  	pcb.ecSave();
-	    System.assertEquals(tlo.id, pcb.myObject.get('Test_Lookup_Object__c'));
-		System.assertNotEquals(null, tlo.id);
-
-		EnhancedLookupController elc2 = new EnhancedLookupController();
-		elc2.objectToLookup = 'TestLookupObject__c';	
-		elc2.jsonRecordLimit = 5;
-		elc2.fieldName = 'Test_Lookup_Object__c';
-		elc2.pageController = pcb;
-		elc2.getOnLoad();
-		elc2.myValueHolder = tlo2.id;
-	  	pcb.ecSave();
-		System.assertEquals(tlo2.id, (String) pcb.myObject.get('Test_Lookup_Object__c'));
-                
-		EnhancedLookupController elc3 = new EnhancedLookupController();
-		elc3.objectToLookup = 'TestLookupObject__c';	
-		elc3.jsonRecordLimit = 5;
-		elc3.fieldName = 'Test_Lookup_Object__c';
-		elc3.defaultValue = '';
-		elc3.pageController = pcb;
-		elc3.getOnLoad();
-	  	pcb.ecSave();
-		System.assertEquals(tlo2.id, (String) pcb.myObject.get('Test_Lookup_Object__c'));
-		
-		EnhancedLookupController elc4 = new EnhancedLookupController();
-		elc4.objectToLookup = 'TestLookupObject__c';	
-		elc4.jsonRecordLimit = 5;
-		elc4.fieldName = 'Test_Lookup_Object__c';
-		elc4.defaultValue = tlo.id;
-		elc4.pageController = pcb;
-		elc4.getOnLoad();
-	  	pcb.ecSave();
-		//System.assertEquals(tlo.id, (Id) pcb.myObject.get('Test_Lookup_Object__c'));
-		/*System.AssertException: Assertion Failed: Expected: a01A00000029cm2IAA, Actual: a01A00000029cm3IAA
-Class.formation.FormTestSuite.testDefaultValueSaveWithHiddenLookup: line 272, column 3
-External entry point*/
-
 
       }
 
@@ -312,11 +423,20 @@ External entry point*/
     public static testMethod void testPicklist() {
         FormFieldController controller = new FormFieldController();
         Form_Field__c field = new Form_Field__c();
-        field.PicklistEntries__c = 'a,b,c';
+        field.PicklistEntries__c = 'a,b,c%,d';
         field.Type__c = 'Picklist';
         controller.field = field;
-        List<SelectOption> selectlist = controller.getPicklistSelectOptions();
-        System.assertEquals(4, selectlist.size());
+        //List<SelectOption> selectlist = controller.getPicklistSelectOptions();
+
+		PageControllerBase pcb = new PageControllerBase();
+		EnhancedSelectController ensc = new EnhancedSelectController();
+		ensc.picklistEntries = field.PicklistEntries__c;
+		ensc.pageController = pcb;  
+		ensc.fieldName = 'Picklist__c';
+		ensc.getOnLoad();
+        System.assertEquals('c,d', ensc.getPicklistValues().get(3).so.getValue());
+        System.assertEquals(4, ensc.getPicklistValues().size());
+
     }
     
    public static testMethod void testLabel() {
@@ -382,6 +502,45 @@ External entry point*/
     }
 
 
+    public static testMethod void testMulitPicklist() {
+    	
+        Form__c form = new Form__c();
+        form.Name = 'testWebform';
+        form.Object_Name__c = 'TestObject__c';
+        form.Return_URL__c = 'www.x.com';
+        form.SavedByWebformeditor__c = true;
+        
+        insert form;  
+	
+	    Form_Field__c field = new Form_Field__c();
+        field.PicklistEntries__c = '1,2,3';
+        field.Type__c = 'Multi-Select';
+    	field.Form__c = form.id;
+    	insert field;
+    	        
+        PageReference pageRef = Page.form;
+        Test.setCurrentPage(pageRef);
+        ApexPages.currentPage().getParameters().put('name', form.name);
+        PageControllerBase pcb = new PageControllerBase();
+        FormController controller = new FormController();
+        controller.pageController = pcb;
+        controller.getInit();
+        
+		EnhancedMultiselectController ensc = new EnhancedMultiselectController();
+		ensc.picklistEntries = field.PicklistEntries__c;
+		ensc.pageController = pcb;  
+		ensc.fieldName = 'Picklist_Multi_Select__c';
+		ensc.getOnLoad();
+		ensc.myValueHolder = ensc.getPicklistValues()[2].so.getValue();
+		System.assertEquals('3', ensc.getCastedValue());
+	  	pcb.ecSave();
+	  	System.assertEquals('3', pcb.myObject.get('Picklist_Multi_Select__c'));
+        
+        
+    }
+
+
+
 
 
     public static testMethod void testConditionalDisplayAdmin() {
@@ -393,9 +552,9 @@ External entry point*/
         form.SavedByWebformeditor__c = true;
         insert form;
 
-        Form_Field__c f1 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f2 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('EMAIL'), Name = 'Email__c', Form__c = form.Id, Label__c = 'lbl');
-        Form_Field__c f3 = new Form_Field__c(Type__c = 'Picklist', Name = 'Picklist__c', PicklistEntries__c = 'Option 1,Option 2,Option 3', Form__c = form.Id, Label__c = 'lbl');
+        Form_Field__c f1 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('STRING'), Name = 'Text__c', Form__c = form.Id, Label__c = 'tlbl');
+        Form_Field__c f2 = new Form_Field__c(Type__c = WebFormUtils.getDisplayTypeFromSchemaType('EMAIL'), Name = 'Email__c', Form__c = form.Id, Label__c = 'elbl');
+        Form_Field__c f3 = new Form_Field__c(Type__c = 'Picklist', Name = 'Picklist__c', PicklistEntries__c = 'Option 1,Option 2,Option 3', Form__c = form.Id, Label__c = 'plbl');
 
 		insert f1;
 		insert f2;
@@ -426,7 +585,7 @@ External entry point*/
 		fa.addGroup();
 		System.assertEquals(2, fa.groups.size());
 		fa.groupName = 'group2';
-		fa.fieldName = 'Email__c';
+		fa.fieldName = 'Email__c';  
 		fa.addFieldToGroup();
 		System.assertEquals(1, fa.groups.get(1).fields.size());
 		fa.groupName = 'group2';
@@ -440,18 +599,49 @@ External entry point*/
 		fa.groups.get(0).showFieldName = 'Picklist__c';
 		fa.groupName = 'group1';
 		fa.saveShowField();
-		System.assert(fa.groups.get(0).ShowField != null);
-		System.assert(fa.groups.get(0).ShowField.PicklistEntries__c != null);
+		System.assert(fa.groups.get(0).ShowFieldName == 'Picklist__c');
+		System.assert(fa.groups.get(0).ShowFieldType == 'Picklist');  
+		System.assert(fa.groups.get(0).ShowFieldPicklistEntries != null);
 		System.assertEquals(3,fa.groups.get(0).getShowFieldPicklistSO().size());
 		fa.val = 'Option 1';  
 		fa.addVal();
 		fa.val = 'Option 2';  
 		fa.addVal();
+			//	System.assertEquals('Option 1', fa.groups.get(0).showVals.get(0) +  fa.groups.get(0).showVals.get(1) +  fa.groups.get(0).showVals.get(2) + fa.groups.get(0).showVals.get(3));	
+		
 		System.assertEquals(2, fa.groups.get(0).showVals.size());	
 		fa.save();  
 		Field_Show_Rule__c sr = [select name, Form_Field__c, Form_Field__r.name, Form_Field__r.PicklistEntries__c, Value_to_show__c from Field_Show_Rule__c where Form_Field__c =: f3.id limit 1];		
 		System.assertEquals('Option 1,Option 2', sr.Value_to_Show__c);
-		   
+		fa = new FormAdminController();
+		System.assertEquals(2, fa.groups.get(0).showVals.size());	
+		fa.currGroup.groupName = 'group3';
+		fa.addGroup();
+		System.assertEquals(2, fa.groups.size());
+		fa.groupName = 'group3';
+		fa.fieldName = 'Email__c';
+		fa.addFieldToGroup();
+		System.assertEquals(1, fa.groups.get(1).fields.size());  
+		fa.groups.get(1).showFieldName = 'Picklist__c';
+		fa.groupName = 'group3';
+		fa.saveShowField();
+		System.assertEquals('Picklist__c',fa.groups.get(1).showFieldName);
+		System.assertEquals('Picklist',fa.groups.get(1).showFieldType);
+		fa.val = 'Option 3';
+		fa.addVal();
+		fa.save();
+		List<Field_Show_Rule__c> srs = [select name, Form_Field__c, Form_Field__r.name, Form_Field__r.PicklistEntries__c, Value_to_show__c from Field_Show_Rule__c where Form_Field__c =: f3.id];		
+		System.assertEquals(2, srs.size());
+		fa = new FormAdminController();
+		System.assertEquals('Picklist__c',fa.groups.get(1).showFieldName);
+		
+		fa.enableAddValPopup();
+		fa.disableAddValPopup();
+		fa.enablePopup();
+		fa.disablePopup();
+		//System.assertEquals('Picklist',fa.groups.get(1).showField.name);  
+		
+
     }
 
   

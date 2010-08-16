@@ -1,15 +1,16 @@
-<apex:component controller="FormController" allowDML="true" >   
+<apex:component controller="FormController" allowDML="true" access="global" >   
 
-    <apex:attribute name="onCompleteJavascript" description="Javascript that will run when form is finished" type="String" required="false" />
-    <apex:attribute name="formName" description="Name of form to be rendered" type="String" required="true" assignTo="{!formName}" />
+    <apex:attribute name="onCompleteJavascript"  access="global" description="Javascript that will run when form is finished" type="String" required="false" />
+    <apex:attribute name="formName" access="global" description="Name of form to be rendered" type="String" required="true" assignTo="{!formName}" />
 
       <apex:attribute name="pageController" 
           type="PageControllerBase"   
           assignTo="{!pageController}"   
           required="true" 
+          access="global"
           description="The controller for the page." />  
 
-    <apex:attribute name="object" assignTo="{!myObject}" type="SObject" description="object fields will be saved to" required="false" />  
+    <apex:attribute name="object"  access="global" assignTo="{!myObject}" type="SObject" description="object fields will be saved to" required="false" />  
 
 	{!init}  
 
@@ -170,7 +171,14 @@
 		                                    </apex:repeat>
 		                            });
 		                </apex:repeat>      
-		                
+		                <apex:repeat value="{!fieldsWithMaxLength}" var="f">
+		
+		                            $('.cf{!f.order} :input').keypress(function(e) {
+		                               
+										        $('.form').validate();
+										});
+
+		                </apex:repeat>      
 		
 						$(document).ready(function () {			
 								    $('#form').show();

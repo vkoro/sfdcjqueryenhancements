@@ -74,8 +74,10 @@ public with sharing class EnhancedSelectController extends EnhancedComponentCont
                 SelectOption so;
                 so = new SelectOption('','--Select--');  
                 picklistSO.add(so);  
+                picklistEntries = picklistEntries.replace('%,','--COMMA--');
                 String[] values = picklistEntries.split(',' , 0);
                 for(String s:values) {
+                	s = s.replaceAll('--COMMA--',',');
                     so = new SelectOption(s,s);
                     picklistSO.add(so);  
                 }

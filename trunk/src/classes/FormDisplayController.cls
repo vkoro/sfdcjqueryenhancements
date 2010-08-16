@@ -1,4 +1,4 @@
-public with sharing class FormDisplayController extends PageControllerBase {
+global class FormDisplayController extends PageControllerBase {
      
       public ApexPages.StandardController standardCon { get; set; }
       public String fieldName                       { get; set; }
@@ -7,12 +7,12 @@ public with sharing class FormDisplayController extends PageControllerBase {
       public SObject activeSObject                  { get; set; }  
 
     public FormDisplayController() {
-        
+    	        
         formname = ApexPages.CurrentPage().getParameters().get('name');
                
     }  
           
-  public override PageReference ecSave() {
+  global override PageReference ecSave() {
   	
   	FormController formCon = (FormController) dispatchingController;
 
@@ -71,7 +71,8 @@ public with sharing class FormDisplayController extends PageControllerBase {
       	// may be optional if using a standard controller w/ standard elements alongside this
       	// although appears not to be triggered if no inputField is changed
      	upsert myObject;   
-     	
+
+	     	
      	//System.debug(LoggingLevel.WARN, 'TRYING TO INSERT ACTIVITY RECORD');  
      	//System.debug(LoggingLevel.WARN, 'formCon is null? ' + (formCon == null));  
      	//System.debug(LoggingLevel.WARN, 'formCon form is null? ' + (formCon.form == null));  
