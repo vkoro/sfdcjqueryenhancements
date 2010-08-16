@@ -2,7 +2,7 @@
 Copyright notice at page bottom
 -->
  
-<apex:page controller="FormDemoController" showheader="false">
+<apex:page controller="FormDisplayController" showheader="false">
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/>
@@ -11,7 +11,7 @@ Copyright notice at page bottom
     
     <style type="text/css">
      
-        #container {position: relative; width: 100%; margin:15px 15px;
+        #container {position: relative; width: 100%; margin:15px 15px; }
         
     </style>
   

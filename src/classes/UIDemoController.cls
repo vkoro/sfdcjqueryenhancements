@@ -5,7 +5,8 @@ public with sharing class UIDemoController extends PageControllerBase {
 
       public UIDemoController(ApexPages.StandardController controller) {
             standardCon = controller;
-            this.myObject = controller.getRecord();         
+            this.myObject = controller.getRecord(); 
+            //insertDummyLookupRecords();        
       }
        
       // First we save the values from the Enhanced Component controllers, then whatever standard fields there are.
@@ -18,11 +19,9 @@ public with sharing class UIDemoController extends PageControllerBase {
 
         return null;
      }
-     
-      /* 
         
      public void insertDummyLookupRecords() {
-        
+        /*
              List<TestLookupObject__c> tlos = new List <TestLookupObject__c>();
         
              TestLookupObject__c tlo = new TestLookupObject__c(); tlo.name = 'Adélie penguin - Pygoscelis adeliae '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'African elephant - Loxodonta africana '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'American beaver - Castor canadensis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'American bison - Bison bison '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'American black bear - Ursus americanus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'American moose - Alces americanus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Amphibians - Class Amphibia '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Amphisbaenians, Lizards, and Snakes - Order Squamata '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Amur leopard - Panthera pardus orientalis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Animals - Kingdom Animalia '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Arctic wolf - Canis lupus arctos '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Arthropoods - Arthropoda '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Asiatic elephant - Elephas maximus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Atlantic puffin - Fratercula arctica '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Atlantic white-sided dolphin - Lagenorhynchus acutus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Aye-aye - Daubentonia madagascariensis  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Bar-headed goose - Anser indicus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Bats - Order Chiroptera '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Beaver, American - Castor canadensis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Birds - Class Aves '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Birds of prey - Order Falconiformes '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Bison, American - Bison bison '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Black rhinoceros - Diceros bicornis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Black-footed ferret - Mustela nigripes '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Blue-footed booby - Sula nebouxii '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Blue whale - Balaenoptera musculus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Bobcat - Lynx rufus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Bottlenose dolphin - Tursiops truncatus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Brown bear - Ursus arctos '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Burchells zebra - Equus burchellii  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Caecilians - Order Gymnophiona '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'California sea hare - Aplysia californica '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Canada goose - Branta canadensis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Canids - Family Canidae '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Caracal - Caracal caracal '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Caribou - Rangifer tarandus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Carnivores - Order Carnivora '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Cartilaginous Fishes - Class Chondrichthyes '; tlos.add(tlo); tlo = new TestLookupObject__c(); 
@@ -32,8 +31,9 @@ public with sharing class UIDemoController extends PageControllerBase {
              tlo.name = 'Pronghorn - Antilocapra americana '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Przewalskis wild horse - Equus caballus przewalskii  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rabbits, hares, and pikas - Order Lagomorpha '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Ray-finned fishes - Class Actinopterygii '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Red-eyed tree frog - Agalychnis callidryas '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Reindeer - Rangifer tarandus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Reptiles - Class Reptilia '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rhinoceros, black - Diceros bicornis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rhinoceros, white - Ceratotherium simum '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rhinoceros iguana - Cyclura cornuta '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rodents - Order Rodentia '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Rodriguez flying fox - Pteropus rodricensis '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Roseate spoonbill - Platalea ajaja '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Ruby-throated hummingbird - Archilochus colubris  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Scarlet ibis - Eudocimus ruber '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Shoebill - Balaeniceps rex '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Siberian tiger - Panthera tigris altaica '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Snails, slugs, and nudibranchs - Class Gastropoda '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Snow leopard - Panthera uncia '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Somali wild ass - Equus asinus somalicus '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Southern tamandua - Tamandua tetradactyla '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Sponges - Phylum Porifera '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Spectacled bear - Tremarctos ornatus  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Tapirs - Family Tapiridae '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Tiger - Panthera tigris '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Tinamous - Order Tinamiformes '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Tufted titmouse - Baeolophus bicolor '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Turtles and tortoises - Order Chelonia  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Wandering albatross - Diomedea exulans '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Waterfowl - Order Anseriformes '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'White rhinoceros - Ceratotherium simum  '; tlos.add(tlo); tlo = new TestLookupObject__c(); tlo.name = 'Xenarthrans - Order Xenarthra '; tlos.add(tlo);        
          
              insert tlos; 
+             */
         
-      }  */
+      }  
       
       public List<SelectOption> getFieldNames()
       {
@@ -44,5 +44,16 @@ public with sharing class UIDemoController extends PageControllerBase {
                  for(String fn : fieldNames)
                      fieldNamesSO.add(new SelectOption(fn,fn));
                  return fieldNamesSO;
+      }
+      
+      public static testMethod void testUIDemoCon() 
+      {
+      	
+      	TestObject__c to = new TestObject__c();
+      	ApexPages.StandardController sc = new ApexPages.StandardController(to);
+      	UIDemoController con = new UIDemoController(sc);
+      	con.getFieldNames();
+      	con.save();
+      	
       }
 }

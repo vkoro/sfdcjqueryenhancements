@@ -1,9 +1,9 @@
-<apex:component controller="EnhancedLabelController" allowDML="true">
+<apex:component controller="EnhancedLabelController" allowDML="true" access="global">
 
-    <apex:attribute name="label" description="This is the label" type="String" required="true" assignTo="{!label}" />
-    <apex:attribute name="for" description="Field name that this tooltip is for" type="String" required="false" assignTo="{!forField}" />
-    <apex:attribute name="tooltip" description="This is the tooltip" type="String" required="false" assignTo="{!tooltip}" />
-    <apex:attribute name="renderIcon" description="Render tooltip icon?" type="Boolean" required="false" assignTo="{!renderIcon}" />
+    <apex:attribute name="label" description="This is the label" access="global" type="String" required="true" assignTo="{!label}" />
+    <apex:attribute name="for" description="Field name that this tooltip is for" access="global" type="String" required="false" assignTo="{!forField}" />
+    <apex:attribute name="tooltip" description="This is the tooltip" access="global" type="String" required="false" assignTo="{!tooltip}" />
+    <apex:attribute name="renderIcon" description="Render tooltip icon?" access="global" type="Boolean" required="false" assignTo="{!renderIcon}" />
 
     <script type="text/javascript" src="{!URLFOR($Resource.JQTooltip13,'jquery-tooltip/jquery.tooltip.min.js')}"></script>
     <apex:stylesheet value="{!URLFOR($Resource.JQTooltip13,'jquery-tooltip/jquery.tooltip.css')}"/>      

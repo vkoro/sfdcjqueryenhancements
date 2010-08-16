@@ -1,17 +1,18 @@
-<apex:component controller="EnhancedCheckboxController" allowDML="true" >
+<apex:component controller="EnhancedCheckboxController" allowDML="true" access="global">
     
       <apex:attribute name="pageController" 
           type="PageControllerBase" 
           assignTo="{!pageController}"   
-          required="true" 
+          required="false" 
+          access="global"
           description="The controller for the page." />
           
-    <apex:attribute name="object" description="This is the object" type="SObject" required="false" assignTo="{!myObject}" />
-    <apex:attribute name="fieldName" description="This is the field name" type="String" required="true" assignTo="{!fieldName}" />
-    <apex:attribute name="required" description="Is this field required?" type="Boolean" required="false" assignTo="{!required}" />
-    <apex:attribute name="hidden" description="Is this text hidden?" type="Boolean" required="false" assignTo="{!hidden}" />
-    <apex:attribute name="defaultValue" description="default value for field, will display and override other values" type="String" required="false" assignTo="{!defaultValue}" />
-	<apex:attribute name="downgrade" description="Should enhanced features be disabled?" required="false" type="Boolean" assignTo="{!downgrade}" />
+    <apex:attribute name="object" access="global" description="This is the object" type="SObject" required="false" assignTo="{!myObject}" />
+    <apex:attribute name="fieldName" access="global" description="This is the field name" type="String" required="true" assignTo="{!fieldName}" />
+    <apex:attribute name="required" access="global" description="Is this field required?" type="Boolean" required="false" assignTo="{!required}" />
+    <apex:attribute name="hidden" access="global" description="Is this text hidden?" type="Boolean" required="false" assignTo="{!hidden}" />
+    <apex:attribute name="defaultValue" access="global" description="default value for field, will display and override other values" type="String" required="false" assignTo="{!defaultValue}" />
+	<apex:attribute name="downgrade" access="global" description="Should enhanced features be disabled?" required="false" type="Boolean" assignTo="{!downgrade}" />
 
 
     {!onLoad}

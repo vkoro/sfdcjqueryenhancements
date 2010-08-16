@@ -78,12 +78,12 @@ public with sharing class EnhancedMultiselectController extends EnhancedComponen
                  System.debug('USING PASSED');
                 picklistSO = new List<SelectOption>();
                 SelectOption so;
-                //so = new SelectOption('','--Select--');  
-                //picklistSO.add(so);    
+                picklistEntries = picklistEntries.replace('\\,','--COMMA--');
                 String[] values = picklistEntries.split(',' , 0);
                 for(String s:values) {
+                	s = s.replaceAll('--COMMA--',',');
                     so = new SelectOption(s,s);
-                    picklistSO.add(so);
+                    picklistSO.add(so);  
                 }
             
         } 

@@ -4,7 +4,7 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/>
     <script type="text/javascript" src="{!URLFOR($Resource.JQDaterangepicker20, 'js/daterangepicker.jQuery.js')}"/>
-	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/cupertino/jquery-ui.css" />    
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/cupertino/jquery-ui.css" />    
     <style type="text/css">
        
        .message {
@@ -95,7 +95,7 @@
             $('#formfieldlisting .order').each(function(i, o){
                 o.value = i+1;
             });
-            
+              
             //make sure the output matches
             $('#formfieldlisting .orderoutput').each(function(i, o){
                 //alert('index: ' + i + ' order : ' + o.value + ' object id: ' + o.id);
@@ -110,14 +110,18 @@
     
     <apex:form id="pageForm">
 
-    <apex:sectionHeader title="Web Form" subtitle="editor"/>
+    <apex:sectionHeader title="Web Form Editor"/>
                         
     <apex:PageBlock title="Web Form Editor" id="pageBlock">
 
         <!-- Button Section -->
-        <apex:pageBlockButtons >
+        <apex:pageBlockButtons >  
             <apex:commandButton value="Save" action="{!save}" status="status"/> 
+            <apex:commandButton value="Setup Validation Rules" action="{!saveAndValidation}" status="status"/> 
+            <apex:commandButton value="Setup Conditional Display" action="{!saveAndConditionalDisplay}" status="status"/> 
+            <apex:commandButton value="Clone Form" action="{!deepClone}" status="status"/> 
             <apex:commandButton value="Cancel" action="{!cancel}" status="status"/>
+            
         </apex:pageBlockButtons>
  
      <apex:PageBlockSection columns="1">
@@ -151,9 +155,9 @@
               
                <c:enhancedLabel label="Default Record:" tooltip="Field values from this record will be used as default values for the form" for="defaultRecord" renderIcon="true"/>    
                <apex:pageBlockSectionItem >
-	               <apex:selectList value="{!webform.Default_Record__c}" size="1" id="defaultRecord" >
-	                    <apex:selectOptions value="{!recordSelectOptions}"/>            
-	                </apex:selectList>          
+                   <apex:selectList value="{!webform.Default_Record__c}" size="1" id="defaultRecord" >
+                        <apex:selectOptions value="{!recordSelectOptions}"/>            
+                    </apex:selectList>          
                </apex:pageBlockSectionItem>
                 
         </apex:panelGrid><BR/>
@@ -183,20 +187,20 @@
             <table>
                 <tr>
                     <td>
-                        <apex:outputLabel value="Add Group Header" rendered="{!formFieldsSize >0}"/>&nbsp;&nbsp;
+                        <apex:outputLabel value="Add Group Header" />&nbsp;&nbsp;
                     </td>
                     <td>
-                        <apex:commandLink action="{!addHeader}" rerender="formfieldsPanel, objectfieldsPanel" status="status"  rendered="{!formFieldsSize >0}" oncomplete="fieldsSortable();">                                                 
+                        <apex:commandLink action="{!addHeader}" rerender="formfieldsPanel, objectfieldsPanel" status="status"  oncomplete="fieldsSortable();">                                                 
                             <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add"/>
                         </apex:commandLink>
                      </td>
                 </tr>
                 <tr>
                     <td>
-                        <apex:outputLabel value="Add Info Text" rendered="{!formFieldsSize >0}"/>&nbsp;&nbsp;
+                        <apex:outputLabel value="Add Info Text" />&nbsp;&nbsp;
                     </td>
                     <td>
-                        <apex:commandLink status="status"  rendered="{!formFieldsSize >0}" action="{!addInfo}" rerender="popup, formfieldsPanel, objectfieldsPanel" onComplete="fieldsSortable();">                                                 
+                        <apex:commandLink status="status" action="{!addInfo}" rerender="popup, formfieldsPanel, objectfieldsPanel" onComplete="fieldsSortable();">                                                 
                             <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add"/>
                         </apex:commandLink>
                      </td>
@@ -251,16 +255,15 @@
                         <th style="width:25px;">Req</th>
                         <th style="width:30px;">Order</th>
                         <th style="width:30px;">Remove</th> 
-                        <th style="width:150px;">Validate As</th>
                     </tr>
                 </thead>
             </table>
             <div id="formfieldlisting" class="connectedSortable">
                 <apex:repeat value="{!formFields}" var="f" id="formfieldsRepeat">
-                    <table id="{!f.Name}" class="formfieldrow{!IF(f.APIRequired__c == true, ' apirequired', '')}" style="width: 510px; cursor:pointer;">
+                    <table id="{!f.Name}" class="formfieldrow{!IF(f.APIRequired__c == true, ' apirequired', '')}" style="cursor:pointer;">
                         <tr title="{!f.Name}" class="formfield">    
                             <td style="width:125px;border-bottom:1px solid #E3DEB8;">
-                            	<apex:inputText value="{!f.Label__c}" size="15"/>
+                                <apex:inputText value="{!f.Label__c}" size="15"/>
                             </td>
                             <td style="width:80px;border-bottom:1px solid #E3DEB8;"><apex:outputText value="{!f.Type__c}"/></td>                
                             <td style="width:25px;border-bottom:1px solid #E3DEB8;">
@@ -279,18 +282,6 @@
                                 <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_delete.png')}" title="Remove"/>
                              </apex:commandLink>
                              </td>       
-                            <td>
-								<apex:selectList value="{!f.Validate_As__c}" size="1" rendered="{!f.Type__c == 'Text'}">
-									<apex:selectOptions value="{!textVal}" />
-								</apex:selectList>
-								<apex:selectList value="{!f.Validate_As__c}" size="1" rendered="{!f.Type__c == 'Phone'}">
-									<apex:selectOptions value="{!phoneVal}" />
-								</apex:selectList>
-								<apex:outputPanel rendered="{!f.Type__c == 'Date'}">
-									<apex:inputText value="{!f.Minimum_Date__c}" size="8" styleClass="drp dateRange{!f.Order__c}" /> to<apex:inputText value="{!f.Maximum_Date__c}" styleClass="drp dateRange{!f.Order__c}" size="8" /><span id="after{!f.Order__c}" >&nbsp;</span>
-								</apex:outputPanel>
-								
-                            </td>
 
                         </tr>
                     </table>                    
@@ -329,35 +320,35 @@
 
 
 
-    	<script type="text/javascript">
-    	   function dateRangeInit()  
-    	   {
-    	   		//$('.drp').daterangepicker();
-    	   	
-    	   	<apex:repeat value="{!dateFields}" var="do">
-    	   	
-    	   	   $('.dateRange{!do}\\.0').daterangepicker({appendTo: $('#after{!do}\\.0')}); 
-    	   	
-    	   	</apex:repeat>  
+        <script type="text/javascript">
+           function dateRangeInit()  
+           {
+                //$('.drp').daterangepicker();
+            
+            <apex:repeat value="{!dateFields}" var="do">
+            
+               $('.dateRange{!do}\\.0').daterangepicker({appendTo: $('#after{!do}\\.0')}); 
+            
+            </apex:repeat>  
 
 
-    	   }
-    	
-    	</script>
+           }
+        
+        </script>
     
     </apex:outputPanel>  
 
     </apex:form>  
     
            <div id="popup" style="display:none" >
-			    <apex:form >
+                <apex:form >
             
-		           Info Text:
-		           
-		               <apex:inputTextArea richText="true" value="{!ff.Info__c}" />
-		
-		               <apex:commandButton value="Add" action="{!addInfo}" rerender="popup, formfieldsPanel, objectfieldsPanel" onComplete="$('#popup').dialog('close');fieldsSortable();"/>
-		    	</apex:form>
+                   Info Text:
+                   
+                       <apex:inputTextArea richText="true" value="{!ff.Info__c}" />
+        
+                       <apex:commandButton value="Add" action="{!addInfo}" rerender="popup, formfieldsPanel, objectfieldsPanel" onComplete="$('#popup').dialog('close');fieldsSortable();"/>
+                </apex:form>
            </div>
 
 </apex:page>

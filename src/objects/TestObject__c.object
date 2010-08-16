@@ -34,7 +34,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>Deployed</deploymentStatus>
+    <deploymentStatus>InDevelopment</deploymentStatus>
     <fields>
         <fullName>Checkbox__c</fullName>
         <defaultValue>false</defaultValue>

@@ -34,25 +34,12 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>Deployed</deploymentStatus>
-    <fields>
-        <fullName>Background_Color__c</fullName>
-        <label>Background Color</label>
-        <length>10</length>
-        <type>Text</type>
-    </fields>
+    <deploymentStatus>InDevelopment</deploymentStatus>
     <fields>
         <fullName>Default_Record__c</fullName>
         <description>ID of object which contains the default values of the form</description>
         <label>Default Record</label>
         <length>20</length>
-        <type>Text</type>
-    </fields>
-    <fields>
-        <fullName>Default_Value__c</fullName>
-        <description>ID of object which contains the default values of the form</description>
-        <label>Default Value</label>
-        <length>15</length>
         <type>Text</type>
     </fields>
     <fields>
@@ -116,12 +103,6 @@
         <type>Text</type>
     </fields>
     <fields>
-        <fullName>Text_Color__c</fullName>
-        <label>Text Color</label>
-        <length>15</length>
-        <type>Text</type>
-    </fields>
-    <fields>
         <fullName>Title__c</fullName>
         <description>The title of the form.</description>
         <inlineHelpText>The title that will appear on the form. This can be left blank.</inlineHelpText>
@@ -172,7 +153,7 @@
         <label>All</label>
     </listViews>
     <nameField>
-        <label>Inquiry Form Name</label>
+        <label>Form Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>Forms</pluralLabel>
@@ -193,14 +174,22 @@
         <fullName>Conditional_Field_Display</fullName>
         <availability>online</availability>
         <displayType>button</displayType>
-        <hasScrollbars>true</hasScrollbars>
         <height>600</height>
-        <isResizable>true</isResizable>
         <linkType>page</linkType>
         <masterLabel>Conditional Field Display</masterLabel>
-        <openType>newWindow</openType>
+        <openType>sidebar</openType>
         <page>conditionalDisplayAdmin</page>
-        <position>none</position>
+        <protected>false</protected>
+    </webLinks>
+    <webLinks>
+        <fullName>Field_Validation</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <height>600</height>
+        <linkType>page</linkType>
+        <masterLabel>Field Validation</masterLabel>
+        <openType>sidebar</openType>
+        <page>validationRuleAdmin</page>
         <protected>false</protected>
     </webLinks>
     <webLinks>

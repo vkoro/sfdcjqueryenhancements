@@ -40,36 +40,47 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
 
 		if(maxDate != null && maxDate != '') 
 		{
-		  String[] stringDate = maxDate.split('/');
-	  	  if(stringDate.size() == 3)
-	  	  {
-		      String m = stringDate[0];
-		      if(m.length() == 1)
-		      	m = '0' + m;
-		      String d =  stringDate[1];
-		      if(d.length() == 1)
-		      	d = '0' + d;
-		      String y = stringDate[2];
-				initialize += ', "maxDate": "' + m + '/' + d + '/' + y + '"';
-
-	  	  }
-			
+		  if(maxDate == 'TODAY')
+				initialize += ', "maxDate": +0 ';
+		  else
+		  {
+			  String[] stringDate = maxDate.split('/');
+		  	  if(stringDate.size() == 3)
+		  	  {
+			      String m = stringDate[0];
+			      if(m.length() == 1)
+			      	m = '0' + m;
+			      String d =  stringDate[1];
+			      if(d.length() == 1)
+			      	d = '0' + d;
+			      String y = stringDate[2];
+					initialize += ', "maxDate": "' + m + '/' + d + '/' + y + '"';
+	
+		  	  }
+		  }
 		}
 			
 		if(minDate != null && minDate != '') 
 		{
-		  String[] stringDate = minDate.split('/');
-	  	  if(stringDate.size() == 3)
-	  	  {
-		      String m = stringDate[0];
-		      if(m.length() == 1)
-		      	m = '0' + m;
-		      String d =  stringDate[1];
-		      if(d.length() == 1)
-		      	d = '0' + d;
-		      String y = stringDate[2];
-				initialize += ', "minDate": "' + m + '/' + d + '/' + y + '"';
-	  	  }
+			
+			if(minDate == 'TODAY')
+				initialize += ', "minDate": +0 ';
+		  else
+		  {
+			
+			  String[] stringDate = minDate.split('/');
+		  	  if(stringDate.size() == 3)
+		  	  {
+			      String m = stringDate[0];
+			      if(m.length() == 1)
+			      	m = '0' + m;
+			      String d =  stringDate[1];
+			      if(d.length() == 1)
+			      	d = '0' + d;
+			      String y = stringDate[2];
+					initialize += ', "minDate": "' + m + '/' + d + '/' + y + '"';
+		  	  }
+		  }
 			
 		}
 																		
