@@ -1,4 +1,4 @@
-<apex:page standardController="TestObject__c" extensions="UIDemoController" showHeader="false" action="{!insertDummyLookupRecords}" >
+<apex:page standardController="TestObject__c" extensions="UIDemoController" cache="false" showHeader="false" action="{!insertDummyLookupRecords}" >
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"/>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"/>
@@ -110,7 +110,7 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
     </div> <!-- end left bar -->
 
     <div id="middlebar">
-		
+        
         <apex:form styleClass="myForm" >   
         
             <table class="enhanced">
@@ -164,7 +164,7 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
                       <td class="label"><apex:outputLabel value="Picklist" /></td>             
                       <td class="value"><c:enhancedSelect fieldName="Picklist__c" pageController="{!this}" object="{!TestObject__c}" /></td>    
                   </tr>   
-                   <tr>
+                   <tr>  
                       <td class="label"><apex:outputLabel value="Multi Select Picklist" /></td>             
                       <td class="value"><c:enhancedMultiselect pageController="{!this}" fieldName="Picklist_Multi_Select__c" object="{!TestObject__c}"  /></td>    
                   </tr>
@@ -174,7 +174,7 @@ label.error { float: none; color: red; padding-left: .5em; vertical-align: top; 
                   </tr> -->   
                   <tr>
                       <td class="label"><apex:outputLabel value="Large Lookup" /></td>             
-                      <td class="value"><c:enhancedLookup pageController="{!this}" fieldName="Test_Lookup_Object__c" objectToLookup="TestLookupObject__c" bigset="{!true == true}" /></td>    
+                      <td class="value"><c:enhancedLookup pageController="{!this}" fieldName="Test_Lookup_Object__c" objectToLookup="TestLookupObject__c" bigset="true" /></td>    
                   </tr>   
                   <tr>
                       <td class="label"><apex:outputLabel value="Text" /></td>             

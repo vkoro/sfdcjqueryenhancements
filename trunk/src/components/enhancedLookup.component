@@ -26,7 +26,7 @@
 	
     {!onLoad}
 
-	<apex:outputPanel rendered="{!downgrade!= true}">
+	<apex:outputPanel rendered="{!downgrade != true}">
 
 	    <apex:inputText styleClass="L{!uid}" value="{!displayName}" />
 	    <span class="S{!uid}"><apex:inputText style="display:none" styleClass="{!uid}" value="{!myValueHolder}" /></span>

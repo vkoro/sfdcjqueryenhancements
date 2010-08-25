@@ -188,10 +188,32 @@ public with sharing class EnhancedComponentTestSuite {
     etc5.getOnLoad();
     etc5.myValueHolder = 'www.fake.com';
     pcb.ecSave();
-    //System.assert(ApexPages.hasMessages());
+
+
     
+    EnhancedLookupController elc2 = new EnhancedLookupController();
+    elc2.objectToLookup = 'TestLookupObject__c'; 
+    TestLookupObject__c tlo_toTest2 = new TestLookupObject__c();
+    tlo_toTest2.name = 'Test TLO2';
+    insert tlo_toTest2;
+    TestLookupObject__c tlo2 = [Select id from TestLookupObject__c where name = 'Test TLO2' limit 1];
     
-    System.assertEquals(12, pcb.getMyComponentControllers().size());
+    elc2.fieldName = 'Test_Lookup_Object__c';
+    elc2.bigset = true;
+    elc2.pageController = pcb;
+    elc2.displayColumn = 'name';
+    elc2.getOnLoad();
+    ApexPages.currentPage().getParameters().put('term', 'Test TLO2');
+    ApexPages.currentPage().getParameters().put('tlo', 'Test_Lookup_Object__c');
+    elc2.doSearch();  
+    System.assert(elc2.getResult().length() > 3);
+    elc2.myValueHolder = tlo2.id;
+    pcb.ecSave();
+    System.assertEquals(tlo2.id, to.Test_Lookup_Object__c);
+    
+
+
+    System.assertEquals(13, pcb.getMyComponentControllers().size());
     System.assertNotEquals(null, pcb.getOnLoadJavascript());
     System.assertNotEquals(null, pcb.getJavascriptMethods());
     System.assertNotEquals(null, pcb.getCompleteJavascript());

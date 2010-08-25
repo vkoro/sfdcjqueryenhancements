@@ -35,7 +35,7 @@
 	   
 	 <apex:outputPanel rendered="{!downgrade == true}">
 
-		   	<apex:selectList value="{!myValueHolder}" size="1" styleClass="{!uid}" >
+		   	<apex:selectList value="{!myValueHolder}" size="1" styleClass="{!uid} formelement" >
 					<apex:selectOptions value="{!picklistSO}"/>			
 			</apex:selectList>
 			

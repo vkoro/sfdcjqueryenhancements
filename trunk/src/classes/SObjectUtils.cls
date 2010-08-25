@@ -6,8 +6,7 @@ public with sharing class SObjectUtils {
     	    	
     	SObject newSO = so.clone(false,true);
     	
-    	//TODO: Find Child objects. List. 
-    	
+      	
    		Schema.DescribeSObjectResult R  = so.getSObjectType().getDescribe();   
     	List<Schema.ChildRelationship> CR = R.getChildRelationships();
     	for (Schema.ChildRelationship c : CR) {

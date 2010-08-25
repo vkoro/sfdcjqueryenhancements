@@ -566,13 +566,8 @@ public class formCreatorController extends PageControllerBase {
         formCreatorController controller = new formCreatorController(stdcon);
         //simulate an object select
         
-        Profile p = [SELECT Id FROM profile WHERE name='System Administrator'];
-        User u2 = new User(alias = 'newUser', email='newuser@testorg.com',
-                    emailencodingkey='UTF-8', lastname='Testing', 
-                    languagelocalekey='en_US',
-                    localesidkey='en_US', profileid = p.Id,
-                    timezonesidkey='America/Los_Angeles', 
-                    username='newuser@testorg.com');
+        Profile p = [SELECT Id, name FROM profile WHERE name='System Administrator'];
+        User u2 = TestUtility.createTestUser(p);
 
         controller.selectedObject = 'TestObject__c';
         controller.selectObject();                    

@@ -88,6 +88,7 @@ global virtual class PageControllerBase {
         '\n<style> .required, .message {color: red;}\n' +    
         //'* { font-family: Verdana; font-size: 96%; }\n' +
         'label.error { float: none; color: red; padding-left: .5em; vertical-align: top; }</style>\n';
+//  TODO: Create different error class for select menu        
 //      'label.selectmenueerror { float: none; color: red; padding-left: 155px; vertical-align: top; }</style>\n';
   }
   
@@ -107,8 +108,11 @@ global virtual class PageControllerBase {
                ' \n' + 
                '   $(form).validate({ \n' +
                ' \n' +
-               '      submitHandler: function(form) {\n' +
-               '        saveMe();\n' +
+               '      submitHandler: function(activeForm) {\n' +
+               //'   alert("saving"); '		+
+//               '        $('.formelement').each(function () { rules( "remove", rules ); }
+
+               '        saveMe();\n' +  
                '      } \n' +
                ' }); \n' +
             onLoadJavascript +  

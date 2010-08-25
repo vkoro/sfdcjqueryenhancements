@@ -1,8 +1,8 @@
-<apex:page controller="FormDemoController" showheader="false">
+<apex:page controller="FormDisplayController" showheader="false">
         
         <style type="text/css">
          
-            #container {position: relative; width: 100%; margin:15px 15px; }
+            #container { position: relative; width: 100%; margin:15px 15px; }
             
         </style>
 
