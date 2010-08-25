@@ -1,0 +1,7 @@
+<apex:page controller="EnhancedLookupController">
+
+In page Visualforce: {!$Page.largeLookup}<BR/>
+
+From APEX: {!testUrl}
+
+</apex:page>

@@ -11,6 +11,9 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 	// because there is no true onload allowed for components
 	// and the constructor is run before the setters on attributes
 	public String getOnLoad(){
+		
+		  if(downgrade == null)
+		  	downgrade = false;
 		  	
 		  onLoad();  
 		  System.debug('getOnLoad TEXT');
@@ -52,6 +55,9 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 			  	}  
 			  }
 		  }
+		  maskedInput = false;
+		  if(validateAs != null && validateAs.toLowerCase().contains('masked'))
+		  	maskedInput = true;  
 		  
 		  String onLoadJS = '';
 		  additionalValRules = '';
@@ -74,11 +80,7 @@ public with sharing class EnhancedTextController extends EnhancedComponentContro
 	          {
 	          	additionalValRules += 'email: true';
 	          }   
-	          else if (validateAs == 'PHONEUSMASKED')
-	          {
-	          	onLoadJS += '$(".' + uid + '").mask("(999) 999-9999");\n';
-	          }
-	          else if (validateAs == 'PHONEUS'  || validateAs == 'USPHONE' || validateAs == 'PHONE' ) 
+	          else if (validateAs == 'PHONEUS'  || validateAs == 'USPHONE' || validateAs == 'PHONE' || validateAs == 'PHONEUSMASKED' ) 
 	          {
 	          	if(maskedInput)
 	          		onLoadJS += '$(".' + uid + '").mask("(999) 999-9999");\n';

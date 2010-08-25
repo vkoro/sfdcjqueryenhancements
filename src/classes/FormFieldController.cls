@@ -20,7 +20,7 @@ global class FormFieldController {
 	public List<SelectOption> picklistSelectOptions;
 	//workaround for bug #W-638516
 	public PageReference pagetemplatename {get;set;}
-	public PageControllerBase pageController { get; set; }
+	public PageControllerBase pageController { get; set; }  
 
 
     public Boolean useEnhancedDatepicker { get; set; }
@@ -33,8 +33,8 @@ global class FormFieldController {
     
 	//CONSTRUCTOR
 	public FormFieldController() {
-		//workaround for bug #W-638516
-        pagetemplatename = new PageReference('/apex/'+System.currentPageReference().getParameters().get('pagetemplatename'));
+		//workaround for bug #W-638516  
+       // pagetemplatename = new PageReference('/apex/'+System.currentPageReference().getParameters().get('pagetemplatename'));
 	}
 
 	public List<SelectOption> getPicklistSelectOptions() {

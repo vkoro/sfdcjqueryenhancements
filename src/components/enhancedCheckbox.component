@@ -17,6 +17,6 @@
 
     {!onLoad}
     
-    <apex:inputCheckbox value="{!myValueHolder}" styleClass="{!uid}" />
+    <apex:inputCheckbox value="{!myValueHolder}" styleClass="{!uid} formelement" />
   
 </apex:component>

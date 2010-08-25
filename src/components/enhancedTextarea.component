@@ -23,12 +23,12 @@
 
 	<apex:outputPanel rendered="{!downgrade != true}">
 
-		   <apex:inputTextArea styleClass="{!uid}" value="{!myValueHolder}" />
+		   <apex:inputTextArea styleClass="{!uid} formelement" value="{!myValueHolder}" />
 		   
 	</apex:outputPanel>
 	<apex:outputPanel rendered="{!downgrade == true}">
 
-		   <apex:inputTextArea styleClass="{!uid}" value="{!myValueHolder}" />
+		   <apex:inputTextArea styleClass="{!uid} formelement" value="{!myValueHolder}" />
   
 	</apex:outputPanel>
 

@@ -144,7 +144,7 @@
 		    
 		        <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>
 		        <tr><td class="tdlabel">&nbsp;</td><td>&nbsp;</td></tr>  
-		        <tr><td></td><td><apex:commandButton value="{!form.Save_Button_Text__c}" rendered="{!NOT(empty)}" /></td></tr>
+		        <tr><td></td><td><apex:commandButton value="{!form.Save_Button_Text__c}" onClick="removeRequiredFromHiddenFields();" rendered="{!NOT(empty)}" /></td></tr>
 		    </table>
 		    
 		        
@@ -155,6 +155,15 @@
 		   <apex:outputText escape="false" value="{!pageController.completeJavascript}"/>  
 		
 		   <script type="text/javascript">  
+		   
+		   				function removeRequiredFromHiddenFields()
+		   				{
+		   				  $('.formelement:hidden').each( function (el) { 
+		   				  			//console.log($(this));
+		   				  			$(this).rules( "remove", "required");
+		   				   });
+		   				
+		   				}
 		
 		                <apex:repeat value="{!fieldsWithShowRules}" var="f">
 		

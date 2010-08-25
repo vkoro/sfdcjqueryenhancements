@@ -20,7 +20,7 @@
 
 	<apex:outputPanel rendered="{!downgrade != true}">  
 
-	    <apex:inputText styleClass="{!uid}" value="{!myValueHolder}" />
+	    <apex:inputText styleClass="{!uid} formelement" value="{!myValueHolder}" />
 	    
 	</apex:outputPanel>
 	<apex:outputPanel rendered="{!downgrade  == true}">

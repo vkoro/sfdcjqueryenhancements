@@ -1,28 +1,45 @@
 public with sharing class EnhancedLookupController extends EnhancedComponentController {
 	
-	String secondDisplayColumn;
-	public String displayColumn 	{ get; set; }
-	public String objectToLookup 	{ get; set; }
-	public String displayName 		{ get; set; }
-	public String filterString 		{ get; set; }
-    public transient List<JsonObject> jsonObjs { get; set; }        
-	public Boolean bigset 			{ get; set; }
+		public String displayColumn 		{ get; set; }
+		public String objectToLookup 		{ get; set; }
+		public String siteUrl		 		{ get; set; }
+		public String host		 		{ get; set; }
+		public String extension		 		{ get; set; }
 
-	private transient String jsonData;  
-	private Map<String,String> values;
-
-  public List<String> paramValues { get; set; }
-  public List<String> paramKeys { get; set; }
-  public Map<String,String> params { get; set; }
-  Map<String, Schema.SObjectType> gd;
-  SObjectType sot;  
-	
-
+		public String displayName 			{ get; set; }
+		public String filterString 			{ get; set; }
+	    public transient List<JsonObject> jsonObjs { get; set; }        
+		public Boolean bigset 		  		{ get; set; }
+		public List<String> paramValues 	{ get; set; }
+		public List<String> paramKeys 		{ get; set; }
+		public Map<String,String> params 	{ get; set; }
+		String secondDisplayColumn;
+		private transient String jsonData;  
+		
+		
+	public enhancedLookupController()  
+	{
+		    host = ApexPages.currentPage().getHeaders().get('Host');
+		
+			/*testUrl = host + ApexPages.currentPage().getUrl();  
+			List<String> l = new List<String>();
+			l.addAll(ApexPages.currentPage().getHeaders().keySet());
+			for(String s : l)
+				System.debug('header:' + s);
+			List<String> l2 = new List<String>();
+			l2.addAll(ApexPages.currentPage().getHeaders().values());
+			for(String s : l2)
+				System.debug('val:' + s);  
+				*/
+	}
 
 	public String getOnLoad(){
 
 		onLoad();		
-		
+  
+  	    if (objectToLookup == null)
+	    	objectToLookup = 'Account';
+  
 		if(bigset == null)
 			bigset = false;
 
@@ -36,11 +53,10 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 			
 			displayCols = displayColumn.split('[.]');
 			if(displayCols.size() > 1)
-				{
+			{
 					displayColumn = displayCols.get(0);
 					secondDisplayColumn = displayCols.get(1);
-				}
-			
+			}
 		}
 		
 		String initialize;
@@ -65,14 +81,35 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 		}	
 		else
 		{
-			//doSearch();  
-			//jsonData = getResult();  
 			uid = 'LL' + uid;
+			
+			String host = ApexPages.currentPage().getHeaders().get('Host');
+			/*List<String> l = new List<String>();
+			l.addAll(ApexPages.currentPage().getHeaders().keySet());
+			for(String s : l)
+				System.debug('header:' + s);
+			List<String> l2 = new List<String>();
+			l2.addAll(ApexPages.currentPage().getHeaders().values());
+			for(String s : l2)
+				System.debug('val:' + s);*/
+			
+		    String fullUrl;
+		    if (Site.getPrefix() != null)
+		         fullUrl = Site.getPrefix() + Page.largeLookup.getUrl();
+		    else
+		    	fullUrl = Page.largeLookup.getUrl();
+		        
+ 
 			initialize = '' +
+		//'				getLookuppageVarfor' + uid + '();' + 	   
 		'		        $(".L' + uid + '").autocomplete({\n' +
-				        
+				
 		'		            source: function(request, response) {\n' +
-		'		                    $.getJSON("' + System.Page.largeLookup.getUrl() + '?otl=' + objectToLookup + '&", {\n' + 
+		
+		//'		                    $.getJSON(( getLookuppageVarfor' + uid + '() + "?otl=' + objectToLookup + '&" ), {\n' + 
+		'		                    $.getJSON(("' + fullUrl + '?otl=' + objectToLookup + '&" ), {\n' + 
+		
+		
 							// Not sure if we need this
 							// see: http://www.tgerm.com/2010/02/visualforce-salesforce-jquery-ajax-how.html
 				            // "core.apexpages.devmode.url" :'1',   
@@ -88,17 +125,15 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 		'		        minLength: 2\n' +
 				            
 		'		        });\n';  
-		//'		    });\n';
 		}
 								  		
 								  		
 							
 		if (myValueHolder != null)
 				initialize += 	'$(".' + uid + '").val("' + (String) myValueHolder + '");\n';
-		    
-
+		     
 		addOnLoadJavascriptToParentController(initialize);
-		return '';
+		return ''; 
 		
 	}
       	
@@ -115,25 +150,17 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
     /** invoked on an Ajax request */    
     public void doSearch() {
     	
-    	  	  params = ApexPages.currentPage().getParameters();
-      paramValues = params.values();
-      paramKeys = new List <String>();
-      paramKeys.addAll(params.keySet());
-      //gd = Schema.getGlobalDescribe();
-      //String soType = ApexPages.currentPage().getParameters().get('type');
-//      sot = gd.get(soType);
-      
-      
-      for(String s: paramKeys)  
-          System.debug('k:' + s);
-      for(String s: paramValues)
-          System.debug('v:' + s);
-        
-    	
-    	
-        //Map<string,string> params = ApexPages.currentPage().getParameters();
-        //json = new JsonObject();
-        
+	  	  params = ApexPages.currentPage().getParameters();
+	      paramValues = params.values();
+	      paramKeys = new List <String>();
+	      paramKeys.addAll(params.keySet());
+	      
+	      
+	      for(String s: paramKeys)  
+	          System.debug('k:' + s);
+	      for(String s: paramValues)
+	          System.debug('v:' + s);
+                
         if(params.get('otl') != null)
 	        objectToLookup = params.get('otl');
 	    else if (objectToLookup == null)
@@ -150,11 +177,16 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 	    else if (filterString == null)  
 	    	filterString = '';
 	    
+                
+        List<Sobject> records;
+
+        String term = params.get('term');
+
         
-        // Do SOQL query to see if there are any records !
-        List<Sobject> records = getRecords(params.get('term'));
-        
-        if (!records.isEmpty()) {  
+        if(term != null)
+	        records = getRecords(term);    
+          
+        if (records != null && !records.isEmpty()) {  
             // Jsonify the results !
             jsonObjs = new List<JSONObject>();   
             for (Sobject o : records) {
@@ -170,7 +202,6 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 
             }   
 
-           // JsonArray ja = json.optJSONArray('objects');  
         }
     }
     
@@ -229,10 +260,6 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 
     // Returns the JSON result string
     public String getResult() {
-    	//List<String> jsonStrings = new List<String>();
-    	
-    	//for(JsonObject jo: jsonObjs)
-	    //     jsonStrings.add(jo.ValuetoString());
 	    if(jsonObjs != null)
 		    return JsonUtils.jsonify(jsonObjs);
 		else return '[ ]';        

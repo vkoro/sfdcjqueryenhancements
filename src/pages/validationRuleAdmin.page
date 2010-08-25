@@ -59,7 +59,7 @@
 
         <!-- Button Section -->
         <apex:pageBlockButtons >
-            <apex:commandButton value="Save Field" action="{!saveFields}" status="status"/> 
+            <apex:commandButton value="Save Fields" action="{!saveFields}" status="status"/> 
 
         </apex:pageBlockButtons>
  
@@ -116,12 +116,13 @@
                             </td>
                             <td>
                                 <apex:outputPanel rendered="{!f.Type__c == 'Text'}">
-                                    Length:&nbsp;<apex:inputText value="{!f.Minimum_Length__c}" size="5" /> (Min) <apex:inputText value="{!f.Max_Length__c}" size="5" /> (Max) 
+                                    Length:&nbsp;<apex:inputField value="{!f.Minimum_Length__c}" /> (Min) <apex:inputField value="{!f.Max_Length__c}"  /> (Max) 
+
                                 </apex:outputPanel>
                                 <apex:outputPanel rendered="{!f.Type__c == 'Date'}">
                                     <apex:inputText value="{!f.Minimum_Date__c}" size="8" styleClass="drp dateRange{!f.Order__c}" /> to<apex:inputText value="{!f.Maximum_Date__c}" styleClass="drp dateRange{!f.Order__c}" size="8" /><span id="after{!f.Order__c}" >&nbsp;</span>
                                 </apex:outputPanel>
-                                <apex:inputField value="{!f.PicklistEntries__c}" rendered="{!f.Type__c == 'Picklist' || f.Type__c == 'NumberPicklist'}"/>            
+                                <apex:inputField value="{!f.PicklistEntries__c}" rendered="{!f.Type__c == 'Picklist' || f.Type__c == 'NumberPicklist' || f.Type__c == 'Multi-Select' }"/>            
                                 <apex:inputField value="{!f.Info__c}" rendered="{!f.Type__c == 'Info'}"/>            
                             </td>
 
