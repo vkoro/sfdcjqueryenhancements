@@ -13,7 +13,9 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 		public List<String> paramValues 	{ get; set; }
 		public List<String> paramKeys 		{ get; set; }
 		public Map<String,String> params 	{ get; set; }
-		String secondDisplayColumn;
+		public String secondDisplayColumn 	{ get; set; }
+		public String thirdDisplayColumn 	{ get; set; }  
+		
 		private transient String jsonData;  
 		
 		
@@ -37,6 +39,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 
 		onLoad();		
   
+  
   	    if (objectToLookup == null)
 	    	objectToLookup = 'Account';
   
@@ -56,8 +59,21 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 			{
 					displayColumn = displayCols.get(0);
 					secondDisplayColumn = displayCols.get(1);
+					if(displayCols.size() > 2)
+						thirdDisplayColumn = displayCols.get(2);
 			}
 		}
+			
+		List<String> fieldCols = fieldName.split(',');
+		if(fieldCols.size() > 1)
+		{  
+				displayColumn = fieldCols.get(0);
+				secondDisplayColumn = fieldCols.get(1);
+				if(fieldCols.size() > 2)
+					thirdDisplayColumn = fieldCols.get(2);
+		}
+		
+		
 		
 		String initialize;
 			
@@ -192,8 +208,16 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
             for (Sobject o : records) {
                 JSONObject cjson = new JSONObject();
                 cjson.putOpt('id', new JSONObject.value((String) o.get('id')));
-                if(secondDisplayColumn != null)            
-	                cjson.putOpt('label', new JSONObject.value((String) o.get(displayColumn) + '(' + ( (String) o.get(secondDisplayColumn) ) + ')' ));
+                if(secondDisplayColumn != null)  {
+
+	                if(thirdDisplayColumn != null)  {
+
+		                cjson.putOpt('label', new JSONObject.value((String) o.get(displayColumn) + '(' + ( (String) o.get(secondDisplayColumn) ) + ',' + ( (String) o.get(thirdDisplayColumn) ) + ')' ));
+	                }
+	                else
+	                	cjson.putOpt('label', new JSONObject.value((String) o.get(displayColumn) + '(' + ( (String) o.get(secondDisplayColumn) ) + ')' ));
+	                	
+                }          
 	            else
 	            	cjson.putOpt('label', new JSONObject.value((String) o.get(displayColumn)));
 	            	
@@ -211,7 +235,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 
   			String limitString;
   			if(filter.length() > 3) 
-  				limitString = 'limit 100';  
+  				limitString = 'limit 20';  
   			else
   				limitString = 'limit 8';  
 
@@ -224,8 +248,11 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
             	filterString = 'AND' + filterString.trim().substring(5, filterString.length());
             	
             String queryString = 'select id, ' + displayColumn;
-            if(secondDisplayColumn != null)
+            if(secondDisplayColumn != null) {
             	queryString += ', ' + secondDisplayColumn;
+            	if(thirdDisplayColumn != null)
+	            	queryString += ', ' + thirdDisplayColumn;
+            }
             queryString += ' from ' + objectToLookup + ' where ' + displayColumn + ' like \'' + completeFilter + '\' ';
             
             if(filterString.toLowerCase().contains('limit'))
@@ -241,8 +268,11 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
         else {
 
             String queryString = 'select id, ' + displayColumn;
-            if(secondDisplayColumn != null)
+            if(secondDisplayColumn != null) {
             	queryString += ', ' + secondDisplayColumn;
+            	if(thirdDisplayColumn != null)
+	            	queryString += ', ' + thirdDisplayColumn;
+            }
             queryString += ' from ' + objectToLookup + ' ';
             
             if(filterString.toLowerCase().contains('limit'))

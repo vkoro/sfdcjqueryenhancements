@@ -10,13 +10,13 @@ global with sharing virtual class EnhancedComponentController {
   public String additionalValRules { get; set; }
   public Integer order          { get; set; }  
   public Boolean downgrade      { get; set; }
-  
+    
   public PageControllerBase pageController { get; 
     set {
       if (value != null) {
         pageController = value;
         pageController.addComponentController(this); 
-        //order = pageController.myComponentControllers.size();  
+        //order = pageController.myComponentControllers.size();    
       }  
     }
   }

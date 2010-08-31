@@ -64,17 +64,20 @@ public with sharing class FormAdminController {
                         formFieldNames.add(new SelectOption(formFields.get(i).name, formFields.get(i).name));
                           
                 
-                if(formFields.get(i).group__c != null && formFields.get(i).Group__c != '')
+                if(formFields.get(i).Group__c != null && formFields.get(i).Group__c != '')
                 {
-                    indexesToRemove.add(i);
 
                     Boolean addedToExistingGroup = false;                   
                     for(fieldGroup g : groups) {     
                         
-                        if(formFields.get(i).Name == g.groupName)
+                        System.debug(formFields.get(i).Name + 'gn: ' + g.groupName);
+                        
+                        if(formFields.get(i).Group__c == g.groupName)
                         {
+                        	System.debug('MATCH');
                             g.fields.add(formFields.get(i));
                             addedToExistingGroup = true;
+                            break;
                         }
                     }
                       
@@ -84,6 +87,8 @@ public with sharing class FormAdminController {
                         groups.get(groups.size() - 1).fields.add(formFields.get(i));
                     }
                 
+                	indexesToRemove.add(i);
+                	
                 }
                 
             }    
@@ -310,7 +315,9 @@ public with sharing class FormAdminController {
     public PageReference addVal() {
     
        displayAddValPopup = false;
-       
+       System.debug('groupname:' + groupname);
+       System.debug('val:' + val);
+         
        for(fieldGroup g : groups) {
                         
             if(groupName == g.groupName)
