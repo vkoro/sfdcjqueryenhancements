@@ -7,7 +7,7 @@ global class FormController extends EnhancedComponentController {
     public String testString                        { get; set; }  
     public String formName                          { get; set; }  
     public String UpdateFieldName                   { get; set; }  
-	public Boolean forwardParams						{ get; set; }
+	public Boolean forwardParams						{ get; set; }  
     public String paramsToForward                   { get; set; }    
 	List<String> params;
 	List<String> values;      
@@ -114,8 +114,10 @@ global class FormController extends EnhancedComponentController {
                     fieldsWithMaxLength.add(fwv);     
                  if(fwv.belongsToGroup)
                     fieldsWithGroups.add(fwv);  
-                 if(fwv.field.Update_On__c == true)
+                 if(fwv.field.Update_On__c == true) {
                     UpdateFieldName = fwv.field.name;
+                    pageController.UpdateFieldName = UpdateFieldName;
+                 }
                  if(f.Required__c)                  
                      hasRequired = true;
                         

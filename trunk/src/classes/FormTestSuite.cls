@@ -343,7 +343,7 @@ public with sharing class FormTestSuite {
       }
 
 
-    public static testMethod void testSaveWithUpdateOne() {
+    public static testMethod void testSaveWithUpdateOn() {
         
         Form__c form = new Form__c();
         form.Name = 'testWebform';
@@ -356,12 +356,12 @@ public with sharing class FormTestSuite {
         Form_Field__c f1 = new Form_Field__c(Type__c = 'Text', Name = 'Text__c', Form__c = form.Id, Hidden__c = true, Update_on__c = true, Label__c = 'lbl', Default_Value__c = 'hi');
         insert f1;  
 
-        Form_Field__c f2 = new Form_Field__c(Type__c = 'Text', Name = 'name', Form__c = form.Id, Hidden__c = true, Update_on__c = true, Label__c = 'lbl', Default_Value__c = 'hi');
+        Form_Field__c f2 = new Form_Field__c(Type__c = 'Text', Name = 'name', Form__c = form.Id, Hidden__c = true, Update_on__c = false, Label__c = 'lbl', Default_Value__c = 'hi');
         insert f2;  
         
         
 		TestObject__c to = new TestObject__c();
-		to.name = 'Frank';
+		to.name = 'Frank99887766655';
 		to.Text__c = 'TestText445566';
 		insert to;
 		
@@ -380,7 +380,7 @@ public with sharing class FormTestSuite {
 		etc.getOnLoad();
 		etc.myValueHolder = 'TestText445566';
 		
-		EnhancedTextController etc2 = new EnhancedTextController();
+		EnhancedTextController etc2 = new EnhancedTextController();  
 		etc2.pageController = pcb;
 		etc2.fieldName = 'name';
 		etc2.getOnLoad();
@@ -389,11 +389,12 @@ public with sharing class FormTestSuite {
 		pcb.ecSave();
 		
 		List<TestObject__c> testObs = [select id, name from TestObject__c where Text__c = 'TestText445566'];
-		//System.assertEquals(1, testObs.size());
-		//System.assertEquals('Franklin', testObs[0].name);
+		System.assertEquals(1, testObs.size());
+		System.assertEquals('Franklin', testObs[0].name);
 		
 
       }
+
 
     
     //no web form id url param
@@ -509,7 +510,7 @@ public with sharing class FormTestSuite {
     }
 
 
-    public static testMethod void testMulitPicklist() {
+    public static testMethod void testMultiPicklist2() {
     	
         Form__c form = new Form__c();
         form.Name = 'testWebform';

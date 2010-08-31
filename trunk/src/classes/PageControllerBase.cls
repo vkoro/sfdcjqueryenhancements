@@ -3,9 +3,11 @@ global virtual class PageControllerBase {
   public List<EnhancedComponentController> myComponentControllers = new List<EnhancedComponentController>();
   private String onLoadJavascript;
   private String javascriptMethods;  
-  global SObject myObject               { get; set; }
+  global SObject myObject      		        	{ get; set; }
+  global String updateFieldName               	{ get; set; }
+
   public Boolean hasHidden = false;
-  public PageReference forwardingURL    { get; set; }
+  public PageReference forwardingURL 		   	{ get; set; }
   public EnhancedComponentController dispatchingController { get; set; }
 
     
@@ -128,10 +130,46 @@ global virtual class PageControllerBase {
     return this;
   }
   
+  global virtual void attemptUpdate() 
+  {
+  	  if(UpdateFieldName != null)
+       {
+                    try {
+                             String queryString = 'Select Id from ' + myObject.getSObjectType() + ' where '  + UpdateFieldName + '=\'' + myObject.get(UpdateFieldName) + '\' limit 1';
+                             System.debug('Attempting to update existing object. Query:' + queryString);
+                             List<SObject> sos = Database.query(queryString);  
+                             if(sos.size() > 0)
+                             {
+                                 SObject newmyObject = sos[0];
+                                 Map<String, Schema.SObjectField> m = myObject.getSObjectType().getDescribe().fields.getMap();
+                                 List<String> fieldNames = new List<String>();
+                                 fieldNames.addAll(m.keySet());
+                        
+                                 for(Integer i=0; i < fieldNames.size(); i++)
+                                 {
+                                    String fieldName = fieldNames.get(i);
+                                    if(fieldName != 'id')
+                                    {
+                                        Object o = myObject.get(fieldName);
+                                        if (o!=null)
+                                            newmyObject.put(fieldName,o);
+                                    }
+                                 }
+                                 myObject = newmyObject;
+                             }
+                             
+                        }
+                        catch(Exception e)
+                        {
+                            System.debug('Error while attempting to Update existing object' + e);
+                        }
+                }
+  	
+  }
+  
   global virtual PageReference ecSave() {
 
         //System.debug(myComponentControllers.size() + ' Component Controllers');
-        
         // We save values in hidden fields first since there may be a duplicate and if there is a duplicate we want the displayed field to override the hidden field.
         
         if(hasHidden)
@@ -141,7 +179,7 @@ global virtual class PageControllerBase {
                   if(ecc.hidden == true)
                   {
                       Object oToPut = ecc.getCastedValue();
-                      System.debug('ecSave ' + ecc.fieldName);   
+                      System.debug('ecSave ' + ecc.fieldName);  
                       
                       if(oToPut != null)  
                       {
@@ -150,6 +188,8 @@ global virtual class PageControllerBase {
                           try {    
                                   
                                   myObject.put(ecc.fieldName, oToPut);
+                      			  if(ecc.FieldName == updateFieldName) 
+								        attemptUpdate();
                               
                           } catch (Exception e) {
                               System.debug('Error with fieldname: ' + ecc.fieldName + ' ' + e);
@@ -175,6 +215,9 @@ global virtual class PageControllerBase {
                       try {    
                               
                               myObject.put(ecc.fieldName, oToPut);
+                			  if(ecc.FieldName == updateFieldName) 
+								        attemptUpdate();
+                              
                           
                       } catch (Exception e) {
                           System.debug('Error with fieldname: ' + ecc.fieldName + ' ' + e);

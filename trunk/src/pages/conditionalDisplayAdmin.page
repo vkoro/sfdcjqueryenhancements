@@ -101,7 +101,7 @@
                                                 </td>
                                                 <td style="width:80px;border-bottom:1px solid #E3DEB8;"><apex:outputText value="{!f.Type__c}"/></td>                
                                                 <td>
-                                                    <apex:commandLink action="{!enablePopup}" rerender="popup" rendered="{!hasGroups}" >                                                 
+                                                    <apex:commandLink action="{!enablePopup}" rerender="popup" rendered="{!hasGroups}" onComplete="$('#addtogroup').dialog('open');" >                                                 
                                                         <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add to Group"/>
                                                         <apex:param name="fieldName" value="{!f.Name}" assignTo="{!fieldName}" />
                                                     </apex:commandLink>
@@ -149,7 +149,7 @@
                                         <td> 
                                             <strong>Add Condition </strong>&nbsp;
                                             
-                                            <apex:commandLink action="{!enableAddValPopup}" rerender="addValPopup"  >    
+                                            <apex:commandLink action="{!enableAddValPopup}" rerender="addValPopup" onComplete="$('#addval').dialog('open');" >    
                                                 <apex:image url="{!URLFOR($Resource.Icons, '/Colored/PNG/action_add.png')}" title="Add Value"/>
                                                 <apex:param name="groupname" value="{!g.groupName}" assignTo="{!groupname}" />
                                                 <apex:param name="activeShowFieldType" value="{!g.ShowFieldType}" assignTo="{!activeShowFieldType}" />
@@ -192,38 +192,6 @@
 
                     </apex:outputPanel>
 
-        <apex:outputPanel id="popup">
-            <apex:outputPanel styleClass="customPopup" layout="block" rendered="{!displayPopUp}">
-
-                    Group to add to:<br/><br/>
-                        <apex:selectList size="1" value="{!groupname}">
-                            <apex:selectOptions value="{!groupsSO}" />
-                        </apex:selectList>
-                    <apex:commandButton value="Add to this group" action="{!addFieldToGroup}" rerender="groupsPanel,popup,formfieldsPanel"/>
-                    <apex:commandButton value="Cancel" action="{!disablePopup}" rerender="popup"/  >  
-
-            </apex:outputPanel>
-        </apex:outputPanel>
-
-  
-        <apex:outputPanel id="addValPopup">
-            <apex:outputPanel styleClass="customPopup" layout="block" rendered="{!displayAddValPopUp}">
-
-                            <apex:inputText value="{!val}" size="10" rendered="{!activeShowFieldType != 'Picklist' && activeShowFieldType != 'NumberPicklist'}" />
-                             <apex:selectList value="{!val}" size="1" rendered="{!activeShowFieldType == 'Picklist'}" >
-                                 <apex:selectOptions value="{!activeShowFieldPicklistSO}"  />
-                             </apex:selectList>    
-                             <apex:selectList value="{!val}" size="1" rendered="{!activeShowFieldType == 'NumberPicklist'}" >
-                                 <apex:selectOptions value="{!activeShowFieldPicklistSO}" />
-                             </apex:selectList>      
-                            <apex:commandButton value="Add" action="{!addVal}" rerender="groupsPanel,addValPopup,formfieldsPanel" / >      
-                             <apex:commandButton value="Cancel" action="{!disableAddValPopup}" rerender="addValPopup"/  >  
-
-            </apex:outputPanel>
-        </apex:outputPanel>
-
-
-
 
 
                 <!-- Action Status -->
@@ -233,9 +201,69 @@
                     </apex:facet>
                 </apex:actionStatus>
                 
-                            
             </apex:PageBlockSection>
         </apex:PageBlock>
-
    </apex:form>  
+
+      <div id="addtogroup" style="display:none" >
+        <apex:outputPanel id="popup">
+           <apex:form >  
+        
+                    Group to add to:<br/><br/>
+                        <apex:selectList size="1" value="{!groupname}">
+                            <apex:selectOptions value="{!groupsSO}" />
+                        </apex:selectList>
+                    <apex:commandButton value="Add to this group" action="{!addFieldToGroup}" rerender="groupsPanel,popup,formfieldsPanel" onComplete="$('#addtogroup').dialog('close');" />
+                    <apex:commandButton value="Cancel" action="{!disablePopup}" immediate="true" rerender="popup" onComplete="$('#addtogroup').dialog('close');" />  
+		   </apex:form>  
+
+            </apex:outputPanel>
+        </div>
+
+      <div id="addval" style="display:none" >  
+  
+        <apex:outputPanel id="addValPopup">
+   			  <apex:form >  
+
+                            <apex:inputText value="{!val}" size="10" rendered="{!activeShowFieldType != 'Picklist' && activeShowFieldType != 'NumberPicklist'}" />
+                             <apex:selectList value="{!val}" size="1" rendered="{!activeShowFieldType == 'Picklist'}" >
+                                 <apex:selectOptions value="{!activeShowFieldPicklistSO}"  />
+                             </apex:selectList>    
+                             <apex:selectList value="{!val}" size="1" rendered="{!activeShowFieldType == 'NumberPicklist'}" >
+                                 <apex:selectOptions value="{!activeShowFieldPicklistSO}" />
+                             </apex:selectList>      
+                            <apex:commandButton value="Add" action="{!addVal}" rerender="groupsPanel,addValPopup,formfieldsPanel" onComplete="$('#addval').dialog('close');"  / >      
+                             <apex:commandButton value="Cancel" action="{!disableAddValPopup}" rerender="addValPopup" onComplete="$('#addval').dialog('close');" />  
+			   </apex:form>  
+            </apex:outputPanel>
+      </div>
+
+
+                    <script type="text/javascript">
+                    
+                           $(function(){      
+                  
+                                $("#addval").dialog({
+                                    autoOpen: false,
+                                    modal: true,
+                                    closeable: false,
+                                    resizable: false,
+                                    width: 600
+                                });
+                                
+                               $("#addtogroup").dialog({
+                                    autoOpen: false,
+                                    modal: true,
+                                    closeable: false,
+                                    resizable: false,
+                                    width: 600
+                                });
+                                
+                                
+                            });
+                              
+                      </script>
+
+
+
 </apex:page>
