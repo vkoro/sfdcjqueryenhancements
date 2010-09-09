@@ -33,10 +33,22 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
 	public String getOnLoad(){
 		
 		onLoad();
-		
-		String initialize = '$(".' + uid + '").datepicker({ changeYear: true, ' +
-																	'changeMonth: true';
-		System.debug('MAX' + maxDate + 'MIN' + minDate);
+		                                                             
+        //detect users locale so that the right date format can be used
+        String locale = UserInfo.getLocale();
+        String datefrmt;
+       
+        if (locale == 'en_US') {
+            datefrmt = '\'MM dd, yy\'';
+        }
+        else {
+            datefrmt = '\'dd MM yy\'';
+        }
+
+        String initialize = '$(".DP' + fieldName + '").datepicker({ changeYear: true, ' +
+                                                                    'changeMonth: true, ' +
+                                                                    'dateFormat: ' + datefrmt +' });\n';  
+		//System.debug('MAX' + maxDate + 'MIN' + minDate);
 
 		if(maxDate != null && maxDate != '') 
 		{
