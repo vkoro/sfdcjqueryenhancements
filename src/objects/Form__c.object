@@ -34,7 +34,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>InDevelopment</deploymentStatus>
+    <deploymentStatus>Deployed</deploymentStatus>
     <fields>
         <fullName>Default_Record__c</fullName>
         <description>ID of object which contains the default values of the form</description>

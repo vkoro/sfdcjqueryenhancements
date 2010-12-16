@@ -1,44 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>*</members>
+        <members>EnhancedCheckboxController</members>
         <name>ApexClass</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexComponent</name>
-    </types>
-    <types>
-        <members>IdeasHome</members>
-        <members>conditionalDisplayAdmin</members>
-        <members>form</members>
-        <members>formGenerator</members>
-        <members>largeLookup</members>
-        <members>largeLookupTest</members>
-        <members>testEnhancedComponents</members>
-        <members>urlTestPage</members>
-        <members>validationRuleAdmin</members>
-        <name>ApexPage</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CustomApplication</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CustomObject</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>CustomTab</name>
-    </types>
-    <types>
-        <members>*</members>
-        <name>StaticResource</name>
     </types>
     <version>18.0</version>
 </Package>

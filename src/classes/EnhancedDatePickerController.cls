@@ -42,10 +42,10 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
             datefrmt = '\'MM dd, yy\'';
         }
         else {
-            datefrmt = '\'dd MM yy\'';
+            datefrmt = '\'dd MM yy\'';  
         }
 
-        String initialize = '$(".DP' + fieldName + '").datepicker({ changeYear: true, ' +
+        String initialize = '$(".' + uid + '").datepicker({ changeYear: true, ' +
                                                                     'changeMonth: true, ' +
                                                                     'dateFormat: ' + datefrmt +' });\n';  
 		//System.debug('MAX' + maxDate + 'MIN' + minDate);
@@ -96,7 +96,7 @@ public with sharing class EnhancedDatePickerController extends EnhancedComponent
 			
 		}
 																		
-			initialize += ' });\n';
+			//initialize += ' });\n';
 																			
 		addOnLoadJavascriptToParentController(initialize);
 		return '';

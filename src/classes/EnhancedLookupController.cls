@@ -21,7 +21,9 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 		
 	public enhancedLookupController()  
 	{
+		System.debug('before: '+filterString);
 		    host = ApexPages.currentPage().getHeaders().get('Host');
+		System.debug('after: '+filterString);
 		
 			/*testUrl = host + ApexPages.currentPage().getUrl();  
 			List<String> l = new List<String>();
@@ -114,36 +116,30 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 		         fullUrl = Site.getPrefix() + Page.largeLookup.getUrl();
 		    else
 		    	fullUrl = Page.largeLookup.getUrl();
-		        
+		
+		System.debug('FILTERSTRING: ' + filterString);
  
+
 			initialize = '' +
-		//'				getLookuppageVarfor' + uid + '();' + 	   
-		'		        $(".L' + uid + '").autocomplete({\n' +
-				
-		'		            source: function(request, response) {\n' +
-		
-		//'		                    $.getJSON(( getLookuppageVarfor' + uid + '() + "?otl=' + objectToLookup + '&" ), {\n' + 
-		'		                    $.getJSON(("' + fullUrl + '?otl=' + objectToLookup + '&" ), {\n' + 
-		
-		
+		//'		getLookuppageVarfor' + uid + '();' + 	   
+		'		$(".L' + uid + '").autocomplete({\n' +
+		'			source: function(request, response) {\n' +
+		//'				$.getJSON(( getLookuppageVarfor' + uid + '() + "?otl=' + objectToLookup + '&" ), {\n' + 
+		//'old (new below)				$.getJSON(("' + fullUrl + '?otl=' + objectToLookup + '" ), {\n' + 
+		'				$.getJSON(("' + fullUrl+'"), {\n' + 
 							// Not sure if we need this
 							// see: http://www.tgerm.com/2010/02/visualforce-salesforce-jquery-ajax-how.html
-				            // "core.apexpages.devmode.url" :'1',   
-		'		                        term: request.term\n' +
-				                        
-		'		                   }, response);\n' +
-		'		               },\n' +
-		'		        select: function(event, ui) {\n' +
-				        
-		'		           $(".' + uid +'").val(ui.item.id);\n' +
-				        
-		'		        },\n' +
-		'		        minLength: 2\n' +
-				            
-		'		        });\n';  
+		'					"core.apexpages.devmode.url":\'1\','+   
+		'					"otl":\'' + objectToLookup+'\','+
+		'					term: request.term\n' +
+		'				}, response);\n' +
+		'			},\n' +
+		'			select: function(event, ui) {\n' +
+		'				$(".' + uid +'").val(ui.item.id);\n' +
+		'			},\n' +
+		'			minLength: 2\n' +
+		'		});\n ';  
 		}
-								  		
-								  		
 							
 		if (myValueHolder != null)
 				initialize += 	'$(".' + uid + '").val("' + (String) myValueHolder + '");\n';
@@ -187,12 +183,10 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 	    else if (displayColumn == null)
 	    	displayColumn = 'name';         
   
-
 	    if(params.get('filterstring') != null)
 	        filterString = params.get('filterstring');
 	    else if (filterString == null)  
 	    	filterString = '';
-	    
                 
         List<Sobject> records;
 
@@ -231,6 +225,7 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
     
     // Does the SOQL query, using Ajax request data
     public List<SObject> getRecords(String filter) {
+    	System.debug('WeGotIt');
         List<SObject> records = new List<SObject>();
 
   			String limitString;
@@ -242,7 +237,6 @@ public with sharing class EnhancedLookupController extends EnhancedComponentCont
 
         if (filter != null && filter.trim().length() > 0){
   
-  				
             String completeFilter = '%' + String.escapeSingleQuotes(filter)  + '%';
             if(filterString.trim().startsWith('WHERE'))
             	filterString = 'AND' + filterString.trim().substring(5, filterString.length());

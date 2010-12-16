@@ -9,7 +9,7 @@ public with sharing class EnhancedCheckboxController extends EnhancedComponentCo
 		onLoad();
 				
 		String v = (String) myValueHolder;
-		System.debug('ENHANCECHECK ' + v);
+		System.debug('ENHANCECHECK ' + v);      
 		
 		if(v != null && v != '')
 		{

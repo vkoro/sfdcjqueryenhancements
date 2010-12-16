@@ -19,7 +19,7 @@ public with sharing class FormAdminController {
     public Boolean displayAddValPopup               { get; set; }
     public Form_Field__c activeFormField            { get; set; }
     
-
+	
     public FormAdminController(ApexPages.StandardController stdController) {
         init();
     }
@@ -97,7 +97,7 @@ public with sharing class FormAdminController {
                 
             for(fieldGroup g : groups)  
             {
-                List<Field_Show_Rule__c> sr = [select name, Form_Field__c, Form_Field__r.name, Form_Field__r.Type__c, Form_Field__r.PicklistEntries__c, Value_to_show__c from Field_Show_Rule__c where name =: g.groupName and Form_Field__r.Form__c =: webformid limit 1];
+                List<Field_Show_Rule__c> sr = [select name, Form_Field__c, Form_Field__r.name, Form_Field__r.Type__c, Form_Field__r.PicklistEntries__c, Value_to_show__c, Operator__c from Field_Show_Rule__c where name =: g.groupName and Form_Field__r.Form__c =: webformid limit 1];//Vilpesh 09292010 added Operator__c
                 if(sr.size() == 1)
                 {
                     if(sr.get(0).value_to_show__c != null && sr.get(0).value_to_show__c != '')
@@ -105,14 +105,22 @@ public with sharing class FormAdminController {
                         
                     g.showRule = sr.get(0);
                     g.showFieldName = sr.get(0).Form_Field__r.name;
-                    g.showFieldType = sr.get(0).Form_Field__r.Type__c;  
+                    g.showFieldType = sr.get(0).Form_Field__r.Type__c;
+                    g.showRule.Operator__c =   sr.get(0).Operator__c; //Added by Vilpesh on 09302010
   
                 }   
-            }               
+            }
         }
-        
-        
-    }  
+    }
+    
+    //Added by Vilpesh 09272010
+    public List<SelectOption> getOperatorNames() {
+        List<SelectOption> operatorNames = new List<SelectOption>();
+        operatorNames.add(new SelectOption('Equals','Equals'));
+        operatorNames.add(new SelectOption('Not Equals','Not Equals'));
+        return operatorNames;
+    }
+      
     
     public PageReference enablePopup() {
         displayPopup = true;
@@ -173,8 +181,8 @@ public with sharing class FormAdminController {
     
     public PageReference addFieldToGroup() {
 
-            System.debug('fieldname:' + fieldname);
-            System.debug('groupname:' + groupname);
+        System.debug('fieldname:' + fieldname);
+        System.debug('groupname:' + groupname);
 
        Form_Field__c formFieldtoAdd;
        Boolean found = false;
@@ -238,7 +246,7 @@ public with sharing class FormAdminController {
 
        if(groupname==null) groupname = ApexPages.CurrentPage().getParameters().get('mygroupname');
        System.debug('groupname:' + groupname);
-
+       
        Form_Field__c showField;
        Boolean found = false;
        String showFieldName;
@@ -331,31 +339,32 @@ public with sharing class FormAdminController {
     }
 
 
-    public PageReference save() 
-    {
+    public PageReference save() {
         List<Form_Field__c> fieldsToSave = new List<Form_Field__c>();
         List<Field_Show_Rule__c> showRulesToSave = new List<Field_Show_Rule__c>();
         
-        for(fieldGroup g : groups)
-        {
+        for(fieldGroup g : groups) {
             //System.debug('SHOWFIELD:' + g.showField);
             
-            for(Form_Field__c f : g.fields)
-            {
+            System.debug('------Group :' + g.groupName);//Vilpesh 09302010
+            if(null != g.fields) System.debug('------Total Fields :' + g.fields.size());//Vilpesh 09302010
+            
+            for(Form_Field__c f : g.fields) {
                 f.Group__c = g.groupName;
                 fieldsToSave.add(f);
             }  
-            if (g.showFieldname != null)
-            {
+            if (g.showFieldname != null) {
                 g.ShowRule.name = g.groupName.replaceAll(' ','');
+                
+                System.debug('------ShowRuleName :' + g.ShowRule.name);//Vilpesh 09302010
                 
                 if ((g.showRule.Form_Field__c == null ) || (((String) g.showRule.Form_Field__c) == ''))
                     g.showRule.Form_Field__c = g.showFieldId;               
 
                 //crazy work around for bug when assigning string  
 
-                if(g.showVals.size() > 0)
-                {
+                if(g.showVals.size() > 0) {
+                	System.debug('------Total Show Values :' + g.showVals.size());//Vilpesh 09302010
                     g.showRule.Value_To_Show__c = g.showVals.get(0) + ',';
                                          
                     for(Integer i = 1; i < g.showVals.size(); i++)
@@ -363,6 +372,9 @@ public with sharing class FormAdminController {
                     
                     if(g.showRule.Value_To_Show__c.length() > 0)
                         g.showRule.Value_To_Show__c = g.showRule.Value_To_Show__c.substring(0, g.showRule.Value_To_Show__c.length()-1);
+                        
+                    System.debug('------Value(s) assigned :' + g.showRule.Value_To_Show__c);//Vilpesh 09302010
+                    System.debug('------Operator :' + g.ShowRule.Operator__c);//Vilpesh 09302010
                     
                 }
                 
@@ -379,8 +391,7 @@ public with sharing class FormAdminController {
         return null;
     }
 
-    public class fieldGroup
-    {
+    public class fieldGroup {
         public String groupName { get; set; }
         public String showFieldName { get; set; }
         public String showFieldId { get; set; }
@@ -395,8 +406,6 @@ public with sharing class FormAdminController {
             showVals = new List<String>();
             //showVals.add('value');
             showRule = new Field_Show_Rule__c();
-            
-
         }
 
         public fieldGroup(String name) {
@@ -405,25 +414,20 @@ public with sharing class FormAdminController {
             showVals = new List<String>();
             //showVals.add('value');  
             showRule = new Field_Show_Rule__c();
-                
-
         }
 
-    public List<SelectOption> getShowFieldPicklistSO() {
-
-                        List<SelectOption> picklistSO = new List<SelectOption>();
-                        SelectOption so;
-                        List<String> values = new List<String>();
-                        if(showFieldPicklistEntries != null) 
-                            values = showFieldPicklistEntries.split(',', 0);
-                        for(String s:values) {
-                            so = new SelectOption(s,s);  
-                            picklistSO.add(so);
-                        }
-                        return picklistSO;  
-        
-    }
-        
+    	public List<SelectOption> getShowFieldPicklistSO() {
+	        List<SelectOption> picklistSO = new List<SelectOption>();
+	        SelectOption so;
+	        List<String> values = new List<String>();
+	        if(showFieldPicklistEntries != null) 
+	            values = showFieldPicklistEntries.split(',', 0);
+	        for(String s:values) {
+	            so = new SelectOption(s,s);  
+	            picklistSO.add(so);
+	        }
+	        return picklistSO;  
+    	}
     }
 
 

@@ -1,6 +1,6 @@
 //See bottom for copyright notice
 
-global class FormController extends EnhancedComponentController {
+global class SFDCFormController extends EnhancedComponentController {
 
     public Form__c form                             { get; set; }
     public List<Form_Field__c> fields               { get; set; }
@@ -126,7 +126,7 @@ global class FormController extends EnhancedComponentController {
                 
             //get a full list of all objecttokens in this org
             gd = Schema.getGlobalDescribe();
-            // System.debug('Results of Global Describe : ' + gd);            
+            //System.debug('Results of Global Describe : ' + gd);            
             //get a reference to the token related to the object referenced in the webform
             //instantiate an object of this type
             String debugString = '';
@@ -155,7 +155,8 @@ global class FormController extends EnhancedComponentController {
                         SObjectType sot = gd.get(form.Object_Name__c);
                         debugString += '4';
 
-                        myObject = sot.newSObject();
+                        if(sot.getDescribe().isAccessible())
+                        myObject = sot.newSObject();                        
                         debugString += '5';
 
                         pageController.myObject = myObject;
@@ -192,7 +193,7 @@ global class FormController extends EnhancedComponentController {
             if(form.Default_Record__c != null)
             {
                 try {
-                    
+                    System.debug('************************************************************************************: ' + form.Object_Name__c);
                     SObjectType sot = gd.get(form.Object_Name__c);
                     Map<String, SObjectField> fields = sot.getDescribe().fields.getMap();
                     List<SObjectField> fieldtokens = fields.values();
@@ -226,7 +227,7 @@ global class FormController extends EnhancedComponentController {
                     System.debug('Could not load default values: ' + e ); 
                 }
             }
-            
+            System.debug('Results of Global Describe : ' + gd);
             pageController.dispatchingController = this;  
             
             
@@ -393,8 +394,9 @@ global class FormController extends EnhancedComponentController {
                 belongsToGroup = false;    
             
             showRules = new List<ShowRule>();
-            List<Field_Show_Rule__c> fsrs = [SELECT id, name, value_to_show__c,Operator__c from Field_Show_Rule__c where Form_Field__c =: field.id];//Added Operator__c by Vilpesh 10012010
-            for(Field_Show_Rule__c fsr : fsrs) {
+            List<Field_Show_Rule__c> fsrs = [SELECT id, name, value_to_show__c from Field_Show_Rule__c where Form_Field__c =: field.id];
+            for(Field_Show_Rule__c fsr : fsrs) 
+            {
                 ShowRule sr = new ShowRule(fsr);
                 if(sr.hasValue)
                     showRules.add(sr);   
@@ -427,18 +429,3 @@ global class FormController extends EnhancedComponentController {
 
     
 }
-
-//  Copyright (c) 2009, David Van Puyvelde, Sales Engineering, Salesforce.com Inc.
-//  All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-//  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-//  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-//  Neither the name of the salesforce.com nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-//  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-//  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-//  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-//  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
