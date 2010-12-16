@@ -32,7 +32,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>InDevelopment</deploymentStatus>
+    <deploymentStatus>Deployed</deploymentStatus>
     <label>Test Lookup Object</label>
     <nameField>
         <label>TestLookupObject Name</label>

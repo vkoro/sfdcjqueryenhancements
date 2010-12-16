@@ -32,7 +32,7 @@
         <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
-    <deploymentStatus>InDevelopment</deploymentStatus>
+    <deploymentStatus>Deployed</deploymentStatus>
     <fields>
         <fullName>APIRequired__c</fullName>
         <defaultValue>false</defaultValue>
@@ -205,6 +205,19 @@
         <type>Picklist</type>
     </fields>
     <label>Form Field</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>Object_Name__c</columns>
+        <columns>Form__c</columns>
+        <columns>NAME</columns>
+        <columns>Group__c</columns>
+        <columns>Type__c</columns>
+        <columns>Label__c</columns>
+        <columns>PicklistEntries__c</columns>
+        <columns>Hidden__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
     <nameField>
         <label>Form Field Name</label>
         <type>Text</type>

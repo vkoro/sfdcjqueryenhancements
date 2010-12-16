@@ -4,4 +4,5 @@
     <label>Formation</label>
     <tab>Form__c</tab>
     <tab>Test_Enhanced_Components</tab>
+    <tab>Form_Field__c</tab>
 </CustomApplication>

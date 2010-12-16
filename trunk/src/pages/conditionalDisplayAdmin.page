@@ -126,7 +126,11 @@
                                                         <apex:actionSupport event="onchange" action="{!saveShowField}" rerender="groupsPanel"> 
                                                             <apex:param name="mygroupname" value="{!g.groupName}" />    
                                                         </apex:actionSupport>
-                                                     </apex:selectList> equals </td>
+                                                     </apex:selectList><!-- equals --> 
+                                                        &nbsp; <!-- Added by Vilpesh 09292010 -->
+                                                        <apex:selectList value="{!g.showRule.Operator__c}" size="1" multiselect="false">
+                                                        <apex:selectOptions value="{!OperatorNames}" />
+                                                        </apex:selectList><!-- End by Vilpesh 09292010 --></td>
                                                      <td>&nbsp;
                                                      </td>
                                     </tr>
@@ -215,7 +219,7 @@
                         </apex:selectList>
                     <apex:commandButton value="Add to this group" action="{!addFieldToGroup}" rerender="groupsPanel,popup,formfieldsPanel" onComplete="$('#addtogroup').dialog('close');" />
                     <apex:commandButton value="Cancel" action="{!disablePopup}" immediate="true" rerender="popup" onComplete="$('#addtogroup').dialog('close');" />  
-		   </apex:form>  
+           </apex:form>  
 
             </apex:outputPanel>
         </div>
@@ -223,7 +227,7 @@
       <div id="addval" style="display:none" >  
   
         <apex:outputPanel id="addValPopup">
-   			  <apex:form >  
+              <apex:form >  
 
                             <apex:inputText value="{!val}" size="10" rendered="{!activeShowFieldType != 'Picklist' && activeShowFieldType != 'NumberPicklist'}" />
                              <apex:selectList value="{!val}" size="1" rendered="{!activeShowFieldType == 'Picklist'}" >
@@ -234,7 +238,7 @@
                              </apex:selectList>      
                             <apex:commandButton value="Add" action="{!addVal}" rerender="groupsPanel,addValPopup,formfieldsPanel" onComplete="$('#addval').dialog('close');"  / >      
                              <apex:commandButton value="Cancel" action="{!disableAddValPopup}" rerender="addValPopup" onComplete="$('#addval').dialog('close');" />  
-			   </apex:form>  
+               </apex:form>  
             </apex:outputPanel>
       </div>
 

@@ -3,4 +3,9 @@
     <apiVersion>19.0</apiVersion>
     <description>Generic template for form display</description>
     <label>Form</label>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>9</minorNumber>
+        <namespace>TargetX_SRMb</namespace>
+    </packageVersions>
 </ApexComponent>

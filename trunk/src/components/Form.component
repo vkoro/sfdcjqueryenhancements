@@ -170,11 +170,22 @@
 		                            $('.cf{!f.order} :input').change(function() {
 		                                
 		                                    <apex:repeat value="{!f.ShowRules}" var="r">
+		                                        var operatorVal = '{!r.operator}';
 		                                        if($(this).val() != '{!r.firstValueToShow}'<apex:repeat value="{!r.valuesToShow}" var="av">&& $(this).val() != '{!av}'</apex:repeat>) {
-		                                            $('.cfg{!r.groupName}').fadeOut();  
+		                                            //$('.cfg{!r.groupName}').fadeOut(); //Old Value commented by Vilpesh 10012010
+		                                            if('Equals' == operatorVal) {
+		                                            	$('.cfg{!r.groupName}').fadeOut();  
+		                                        	} else if('Not Equals' == operatorVal) {
+		                                        		$('.cfg{!r.groupName}').fadeIn();
+		                                        	} 
 		                                        }  
 		                                        else if($(this).val() == '{!r.firstValueToShow}'<apex:repeat value="{!r.valuesToShow}" var="av">|| $(this).val() == '{!av}'</apex:repeat>) {
-		                                            $('.cfg{!r.groupName}').fadeIn();
+		                                            //$('.cfg{!r.groupName}').fadeIn();//Old Value commented by Vilpesh 10012010
+		                                            if('Equals' == operatorVal) {
+		                                            	$('.cfg{!r.groupName}').fadeIn();  
+		                                        	} else if('Not Equals' == operatorVal) {
+		                                        		$('.cfg{!r.groupName}').fadeOut();
+		                                        	}
 		                                        }
 		                                        
 		                                    </apex:repeat>
